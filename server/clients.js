@@ -1,8 +1,6 @@
 const clients = {}
 
-clients.random_id = { clientId: 123 }
-
-const connectClient = (socket, randomId, name) => {
+const registerClient = (socket, randomId, name) => {
   if (!clients[randomId]) {
     clients[randomId] = {
       name: name,
@@ -13,10 +11,12 @@ const connectClient = (socket, randomId, name) => {
       }
     }
   }
-  clients[randomId].socketId = socket.id
+  clients[randomId].socket = socket
+
+  console.log(clients)
 }
 
 module.exports = {
   clients,
-  connectClient
+  registerClient
 }

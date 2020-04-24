@@ -5,6 +5,7 @@ const http = require('http')
 const fs = require('fs')
 
 const game = require('./game')
+const api = require('./api')
 
 var deploy = true
 if (process.argv.length > 2) {
@@ -28,25 +29,9 @@ const io = require('socket.io')(server)
 io.on('connection', (socket) => {
   console.log('new client:', socket.id)
 
-  socket.on('hello', (data) => {
-    console.log('PING', data)
-    socket.emit('world')
-  })
-
-  socket.on('test-event2', (data) => {
-    console.log(data)
-  })
-
-  socket.on('chat', (data) => {
-    console.log(data)
-    socket.emit('chat', {
-      id: 2001,
-      msg: 'casper zecht: ' + data.test2
-    })
-  })
-
-  socket.on('casper', (data) => {
-    console.log('casper;', data)
+  socket.on('register', (data) => {
+    api.registerClient(socket, data)
+    game.send('CONNECT_CLIENT')
   })
 
   socket.on('error', (err) => {
@@ -61,6 +46,8 @@ io.on('connection', (socket) => {
 io.on('error', (err) => {
   console.log('errrororrororo', err)
 })
+
+game.start()
 
 server.listen(2001, () => {
   console.log('server up and running port 2001')
