@@ -81,7 +81,7 @@ const startGame = async (filename) => {
   const resolvedState = gameMachine.resolveState(previousState)
 
   try {
-    gameService.start()
+    gameService.start(resolvedState)
   } catch (err) {
     console.log('gezeur', err)
   }

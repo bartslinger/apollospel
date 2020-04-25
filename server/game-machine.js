@@ -58,49 +58,58 @@ const gameMachine = Machine({
   }
 }, {
   actions: {
-    registerPlayer: (context, event) => {
-      console.log('registering player', event)
-      const playerID = event.playerID
-      var players = context.players
-      for (const i in players) {
-        console.log(i)
-        if (playerID === players[i].id) {
+    registerPlayer: assign({
+      players: (context, event) => {
+        const playerID = event.playerID
+        var players = JSON.parse(JSON.stringify(context.players))
+        for (const i in players) {
+          if (playerID === players[i].id) {
           // this is a match, update name
-          players[i].name = event.playerName
-          return assign({ players: () => players })
+            players[i].name = event.playerName
+            return players
+          }
         }
+        // no match, create player
+        players.push({
+          name: event.playerName,
+          id: event.playerID,
+          money: 100,
+          positionInfo: {
+            ring: 0,
+            square: 0
+          }
+        })
+        return players
       }
-      // no match, create player
-      players.push({
-        name: event.playerName,
-        id: event.playerID,
-        money: 100,
-        positionInfo: {
-          ring: 0,
-          square: 0
-        }
-      })
-      return assign({ players: () => players })
-    },
-    removePlayer: (context, event) => {
+    }),
+    removePlayer: assign((context, event) => {
+      console.log(event)
       const playerID = event.playerID
-      var players = context.players
+      var players = JSON.parse(JSON.stringify(context.players))
+      var newActivePlayer = context.activePlayer
+
       for (const i in players) {
         if (playerID === players[i].id) {
-          // this is a match, update name
+          // match, remove this one
           players.splice(i, 1)
-          var newActivePlayer = context.activePlayer
+          console.log('active player: ', context.activePlayer, 'i:', i)
           if (context.activePlayer > parseInt(i)) {
             console.log('PLAYERREMOVED BIGGER PLAYER ID')
             newActivePlayer -= 1
           }
-          return assign({
-            players: () => players,
-            activePlayer: () => newActivePlayer
-          })
+          if (players.length > 0) {
+            newActivePlayer %= (players.length)
+          } else {
+            newActivePlayer = 0
+          }
         }
       }
-    },
+      return {
+        players: players,
+        activePlayer: newActivePlayer
+
+      }
+    }),
     dieRoll: assign({
       dieRoll: (context, event) => event.value
     }),
@@ -128,20 +137,6 @@ const gameMachine = Machine({
         return players
       }
     }),
-    // moveSpecificPlayer: assign({
-    //   players: (context, event) => {
-    //     // event has the playerID and number of steps
-    //     var players = JSON.parse(JSON.stringify(context.players))
-    //     for (const i in players) {
-    //       if (event.playerID === players[i].id) {
-    //         players[i].positionInfo.square += event.steps
-    //         players[i].positionInfo.square %= 20
-    //         break
-    //       }
-    //     }
-    //     return players
-    //   }
-    // }),
     activateNextPlayer: assign({
       activePlayer: (context, event) => {
         // How many players are there?
