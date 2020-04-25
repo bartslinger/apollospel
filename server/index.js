@@ -37,7 +37,8 @@ const services = {
   register: api.registerPlayer,
   leave: api.leave,
   roll: api.roll,
-  moveAfterRoll: api.moveAfterRoll
+  moveAfterRoll: api.moveAfterRoll,
+  drawCardsForAuction: api.drawCardsForAuction
 }
 
 const io = require('socket.io')(server)

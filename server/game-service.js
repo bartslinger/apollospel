@@ -2,7 +2,6 @@ const { interpret } = require('xstate')
 const fs = require('fs').promises
 const path = require('path')
 const clients = require('./clients')
-const dice = require('./dice')
 
 const gameMachine = require('./game-machine')
 
@@ -13,16 +12,14 @@ const pad = (n, width, z) => {
 }
 
 var saveCounter = 1
-console.log(pad(saveCounter, 5))
 
 const gameService = interpret(gameMachine).onTransition(state => {
   // save state
-  // console.log(state.context.players)
   const saveName = pad(saveCounter, 5)
   saveCounter += 1
   fs.writeFile(path.join(process.env.HOME, 'apollosave', saveName + '.json'), JSON.stringify(state, null, 2))
     .then((res) => {
-      console.log('saved')
+      // console.log('saved')
     })
     .catch((err) => {
       console.log('error saving', err)
@@ -35,6 +32,8 @@ const gameService = interpret(gameMachine).onTransition(state => {
       playerInfos: [],
       yourPlayerIndex: -1,
       activePlayerIndex: state.context.activePlayer,
+      sponsorIndex: -1,
+      auctionMasterIndex: 0,
       gamePhase: state.value,
       auctionInfo: {
         bettingIndex: 0
@@ -46,9 +45,26 @@ const gameService = interpret(gameMachine).onTransition(state => {
       const player = {
         name: state.context.players[i].name,
         money: state.context.players[i].money,
-        positionInfo: state.context.players[i].positionInfo
+        positionInfo: state.context.players[i].positionInfo,
+        stageInfos: [
+          {
+            values: [1, 2, 3]
+          },
+          {
+            values: [2, 4]
+          },
+          {
+            values: [1, 4, 6]
+          }
+        ]
       }
       clientStateUpdate.playerInfos.push(player)
+
+      // Does this player have the sponsor hat?
+      if (state.context.players[i].id === state.context.sponsorHatOwner) {
+        clientStateUpdate.sponsorIndex = parseInt(i)
+      }
+
       if (state.context.players[i].id === client.playerID) {
         clientStateUpdate.yourPlayerIndex = parseInt(i)
       }

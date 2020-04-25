@@ -6,6 +6,6 @@ function getRandomInt (min, max) {
 
 module.exports = {
   throw: () => {
-    return getRandomInt(1, 7)
+    return getRandomInt(0, 6)
   }
 }

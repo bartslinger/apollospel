@@ -27,14 +27,18 @@
       <button>Move</button>
     </form>
     <br>
+    <form @submit.prevent="drawCardsForAuction">
+      <button>Draw cards for auction</button>
+    </form>
+    <br>
     <form @submit.prevent="refresh">
       <button>Refresh</button>
     </form>
     <br>
-    <pre>{{ this.state }}</pre>
-    <br>
     Context
     <pre>{{ this.context }}</pre>
+    <br>
+    <pre>{{ this.state }}</pre>
   </div>
 </template>
 
@@ -71,6 +75,9 @@ export default {
     moveAfterRoll () {
       this.$socket.emit('moveAfterRoll', {
       })
+    },
+    drawCardsForAuction () {
+      this.$socket.emit('drawCardsForAuction', {})
     },
     refresh () {
       this.$socket.emit('refresh', {}, () => {})

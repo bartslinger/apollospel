@@ -62,5 +62,14 @@ module.exports = {
         playerID: playerID
       })
     }
+  },
+  drawCardsForAuction: (socket, data, cb) => {
+    const playerID = clients.clients[socket.id].playerID
+    if (playerID) {
+      gameService.send({
+        type: 'DRAW_CARDS_FOR_AUCTION',
+        playerID: playerID
+      })
+    }
   }
 }

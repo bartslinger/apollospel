@@ -1,4 +1,31 @@
 const { Machine, assign } = require('xstate')
+var _ = require('lodash')
+const squares = require('./squares')
+const stageCards = require('./stage-cards')
+
+const getStageDeck = (stageCards) => {
+  var ids = []
+  for (const i in stageCards) {
+    const card = stageCards[i]
+    if (card.position === 'stack') {
+      ids.push(parseInt(i))
+    }
+  }
+  return ids
+}
+
+const stageCardsToTable = (stageCards, numberToDraw) => {
+  // get cards on deck
+  const deckCardIds = getStageDeck(stageCards)
+  const drawnCardIds = _.sampleSize(deckCardIds, 3)
+  for (const i in drawnCardIds) {
+    console.log(drawnCardIds[i])
+    stageCards[drawnCardIds[i]].position = 'table'
+  }
+
+  console.log(stageCards)
+  return stageCards
+}
 
 const gameMachine = Machine({
   id: 'gameMachine',
@@ -7,8 +34,11 @@ const gameMachine = Machine({
     players: [],
     activePlayer: 0,
     dieRoll: -1,
-    gamePhase: 'rolling',
-    test: ''
+    test: '',
+    sponsorHatOwner: '',
+    auctionMaster: '1',
+    auctionBiddingIndex: -1,
+    stageCards: []
   },
   on: {
     REGISTER_PLAYER: {
@@ -23,18 +53,33 @@ const gameMachine = Machine({
   },
   states: {
     initializing: {
+      entry: [
+        assign({ stageCards: stageCards })
+      ],
       on: {
         '': {
-          target: 'rolling'
+          target: 'auctionDrawingCards'
         }
       }
+    },
+    auctionDrawingCards: {
+      on: {
+        DRAW_CARDS_FOR_AUCTION: {
+          target: 'auctionBidding',
+          actions: 'drawCardsForAuction',
+          cond: 'playerIsAuctionMaster'
+        }
+      }
+    },
+    auctionBidding: {
+
     },
     rolling: {
       on: {
         ROLL: {
           target: 'afterRoll',
           actions: 'dieRoll',
-          guard: 'isPlayersTurn'
+          cond: 'isPlayersTurn'
         }
       }
     },
@@ -43,7 +88,7 @@ const gameMachine = Machine({
         MOVE: {
           target: 'continueNextPlayer',
           actions: 'movePlayer',
-          guard: 'isPlayersTurn'
+          cond: 'isPlayersTurn'
         }
       }
     },
@@ -143,6 +188,12 @@ const gameMachine = Machine({
         const numberOfPlayers = context.players.length
         return (context.activePlayer + 1) % numberOfPlayers
       }
+    }),
+    drawCardsForAuction: assign((context, event) => {
+      const newStageCards = stageCardsToTable(context.stageCards, 3)
+      return {
+        stageCards: newStageCards
+      }
     })
   },
   guards: {
@@ -151,6 +202,12 @@ const gameMachine = Machine({
         console.log('NOT PLAYER TURNNNNNN ')
       }
       return context.players[context.activePlayer].id === event.playerID
+    },
+    playerIsAuctionMaster: (context, event) => {
+      if (context.auctionMaster !== event.playerID) {
+        console.log('PLAYER IS NOT AUCTION MASTER')
+      }
+      return context.auctionMaster === event.playerID
     }
   }
 })
