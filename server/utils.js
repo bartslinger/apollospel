@@ -3,7 +3,7 @@ const { ValidationError } = require('./error')
 const validateCallback = (cb) => {
   if (typeof cb !== 'function') {
     cb = () => { }
-    console.log('cb !== function, replaced with ()=>{}')
+    // console.log('cb !== function, replaced with ()=>{}')
   }
   return cb
 }

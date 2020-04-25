@@ -68,9 +68,8 @@ export default {
       })
     },
     roll () {
-      this.$socket.emit('roll', {
-
-      })
+      this.$socket.emit('roll', {})
+      this.$socket.emit('moveAfterRoll', {})
     },
     moveAfterRoll () {
       this.$socket.emit('moveAfterRoll', {

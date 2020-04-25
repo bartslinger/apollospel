@@ -5,6 +5,19 @@ const clients = require('./clients')
 
 const gameMachine = require('./game-machine')
 
+const getStageInfos = (stageCards, playerID) => {
+  var stageInfos = []
+  for (const i in stageCards) {
+    if (stageCards[i].position === 'player' && stageCards[i].playerID === playerID) {
+      stageInfos.push({
+        id: parseInt(i),
+        values: stageCards[i].values
+      })
+    }
+  }
+  return stageInfos
+}
+
 const pad = (n, width, z) => {
   z = z || '0'
   n = n + ''
@@ -31,7 +44,7 @@ const gameService = interpret(gameMachine).onTransition(state => {
     var clientStateUpdate = {
       playerInfos: [],
       yourPlayerIndex: -1,
-      activePlayerIndex: state.context.activePlayer,
+      activePlayerIndex: state.context.activePlayerIndex,
       sponsorIndex: -1,
       auctionMasterIndex: 0,
       gamePhase: state.value,
@@ -46,17 +59,7 @@ const gameService = interpret(gameMachine).onTransition(state => {
         name: state.context.players[i].name,
         money: state.context.players[i].money,
         positionInfo: state.context.players[i].positionInfo,
-        stageInfos: [
-          {
-            values: [1, 2, 3]
-          },
-          {
-            values: [2, 4]
-          },
-          {
-            values: [1, 4, 6]
-          }
-        ]
+        stageInfos: getStageInfos(state.context.stageCards, state.context.players[i].id)
       }
       clientStateUpdate.playerInfos.push(player)
 

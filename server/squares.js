@@ -40,8 +40,6 @@ const squares = [
 module.exports = {
   Types,
   getType: (ring, square) => {
-    return (ring, square)
+    return squares[ring][square]
   }
 }
-
-console.log(squares[0][1])

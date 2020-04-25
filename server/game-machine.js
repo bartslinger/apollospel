@@ -3,6 +3,40 @@ var _ = require('lodash')
 const squares = require('./squares')
 const stageCards = require('./stage-cards')
 
+const indexFromPlayerID = (context, playerID) => {
+  var index = -1
+  for (const i in context.players) {
+    const player = context.players[i]
+    if (player.id === playerID) {
+      index = parseInt(i)
+    }
+  }
+  return index
+}
+
+const playerIDFromIndex = (context, index) => {
+  var playerID = context.players[index].id
+  return playerID
+}
+
+const nextPlayerIndex = (context, currentIndex) => {
+  return (currentIndex + 1) % context.players.length
+}
+
+const nextBiddingPlayerIndex = (context, currentIndex) => {
+  const start = currentIndex
+  var next = nextPlayerIndex(context, currentIndex)
+  while (true) {
+    if (next === start) {
+      return -1
+    }
+    if (context.players[next].passed === false) {
+      return next
+    }
+    next = nextPlayerIndex(context, next)
+  }
+}
+
 const getStageDeck = (stageCards) => {
   var ids = []
   for (const i in stageCards) {
@@ -27,16 +61,26 @@ const stageCardsToTable = (stageCards, numberToDraw) => {
   return stageCards
 }
 
+const drawStageCardForPlayer = (context, stageCards, playerIndex) => {
+  const deckCardIds = getStageDeck(stageCards)
+  const drawnCardId = _.sample(deckCardIds)
+  if (drawnCardId === undefined) return stageCards
+
+  stageCards[drawnCardId].position = 'player'
+  stageCards[drawnCardId].playerID = playerIDFromIndex(context, playerIndex)
+  return stageCards
+}
+
 const gameMachine = Machine({
   id: 'gameMachine',
   initial: 'initializing',
   context: {
     players: [],
-    activePlayer: 0,
+    activePlayerIndex: 0,
     dieRoll: -1,
     test: '',
     sponsorHatOwner: '',
-    auctionMaster: '1',
+    auctionMaster: '2',
     auctionBiddingIndex: -1,
     stageCards: []
   },
@@ -58,7 +102,7 @@ const gameMachine = Machine({
       ],
       on: {
         '': {
-          target: 'auctionDrawingCards'
+          target: 'rolling'
         }
       }
     },
@@ -66,13 +110,24 @@ const gameMachine = Machine({
       on: {
         DRAW_CARDS_FOR_AUCTION: {
           target: 'auctionBidding',
-          actions: 'drawCardsForAuction',
+          actions: [
+            'drawCardsForAuction',
+            'resetPlayersPassed',
+            'setBiddingIndexToAuctionMaster'
+          ],
           cond: 'playerIsAuctionMaster'
         }
       }
     },
     auctionBidding: {
+      on: {
+        PLACE_BID: {
 
+        },
+        PASS: {
+
+        }
+      }
     },
     rolling: {
       on: {
@@ -86,9 +141,40 @@ const gameMachine = Machine({
     afterRoll: {
       on: {
         MOVE: {
-          target: 'continueNextPlayer',
+          target: 'executingSquareAction',
           actions: 'movePlayer',
           cond: 'isPlayersTurn'
+        }
+      }
+    },
+    executingSquareAction: {
+      on: {
+        '': [
+          {
+            target: 'launchingOrMoney',
+            actions: 'drawStageCard',
+            cond: 'onFreeStageSquare'
+          },
+          {
+            target: 'rolling',
+            cond: 'onThrowAgainSquare'
+          },
+          {
+            target: 'launchingOrMoney',
+            actions: 'claimSponsorHat',
+            cond: 'onSponsorSquare'
+          },
+          {
+            target: 'launchingOrMoney'
+          }
+        ]
+      }
+    },
+    launchingOrMoney: {
+      on: {
+        '': {
+          target: 'continueNextPlayer',
+          actions: 'chooseMoney'
         }
       }
     },
@@ -119,6 +205,7 @@ const gameMachine = Machine({
           name: event.playerName,
           id: event.playerID,
           money: 100,
+          passed: true,
           positionInfo: {
             ring: 0,
             square: 0
@@ -131,27 +218,27 @@ const gameMachine = Machine({
       console.log(event)
       const playerID = event.playerID
       var players = JSON.parse(JSON.stringify(context.players))
-      var newActivePlayer = context.activePlayer
+      var newactivePlayerIndex = context.activePlayerIndex
 
       for (const i in players) {
         if (playerID === players[i].id) {
           // match, remove this one
           players.splice(i, 1)
-          console.log('active player: ', context.activePlayer, 'i:', i)
-          if (context.activePlayer > parseInt(i)) {
+          console.log('active player: ', context.activePlayerIndex, 'i:', i)
+          if (context.activePlayerIndex > parseInt(i)) {
             console.log('PLAYERREMOVED BIGGER PLAYER ID')
-            newActivePlayer -= 1
+            newactivePlayerIndex -= 1
           }
           if (players.length > 0) {
-            newActivePlayer %= (players.length)
+            newactivePlayerIndex %= (players.length)
           } else {
-            newActivePlayer = 0
+            newactivePlayerIndex = 0
           }
         }
       }
       return {
         players: players,
-        activePlayer: newActivePlayer
+        activePlayerIndex: newactivePlayerIndex
 
       }
     }),
@@ -163,7 +250,7 @@ const gameMachine = Machine({
         // event has the playerID and number of steps
         var players = JSON.parse(JSON.stringify(context.players))
         for (const i in players) {
-          if (context.activePlayer.toString() === i) {
+          if (context.activePlayerIndex.toString() === i) {
             const before = players[i].positionInfo.square
             var after = players[i].positionInfo.square + context.dieRoll
             const crossOne = (before <= 8 && after > 8)
@@ -174,6 +261,9 @@ const gameMachine = Machine({
             if (crossTwo && context.dieRoll < 2) {
               after = 18
             }
+            if (after > 19) {
+              players[i].money += 300
+            }
             players[i].positionInfo.square = after
             players[i].positionInfo.square %= 20
             break
@@ -183,10 +273,10 @@ const gameMachine = Machine({
       }
     }),
     activateNextPlayer: assign({
-      activePlayer: (context, event) => {
+      activePlayerIndex: (context, event) => {
         // How many players are there?
         const numberOfPlayers = context.players.length
-        return (context.activePlayer + 1) % numberOfPlayers
+        return (context.activePlayerIndex + 1) % numberOfPlayers
       }
     }),
     drawCardsForAuction: assign((context, event) => {
@@ -194,20 +284,70 @@ const gameMachine = Machine({
       return {
         stageCards: newStageCards
       }
+    }),
+    resetPlayersPassed: assign((context, event) => {
+      var players = JSON.parse(JSON.stringify(context.players))
+      for (const i in players) {
+        players[i].passed = false
+      }
+      return {
+        players: players
+      }
+    }),
+    setBiddingIndexToAuctionMaster: assign((context, event) => {
+      return {
+        auctionBiddingIndex: indexFromPlayerID(context, context.auctionMaster)
+      }
+    }),
+    drawStageCard: assign((context, event) => {
+      return {
+        stageCards: drawStageCardForPlayer(context, context.stageCards, context.activePlayerIndex)
+      }
+    }),
+    claimSponsorHat: assign((context, event) => {
+      const playerID = playerIDFromIndex(context, context.activePlayerIndex)
+      return {
+        sponsorHatOwner: playerID
+      }
+    }),
+    chooseMoney: assign((context, event) => {
+      var players = JSON.parse(JSON.stringify(context.players))
+      var newMoney = 100
+      if (playerIDFromIndex(context, context.activePlayerIndex) === context.sponsorHatOwner) {
+        newMoney = 150
+      }
+      players[context.activePlayerIndex].money += newMoney
+
+      return {
+        players: players
+      }
     })
   },
   guards: {
     isPlayersTurn: (context, event) => {
-      if (context.players[context.activePlayer].id !== event.playerID) {
+      if (context.players[context.activePlayerIndex].id !== event.playerID) {
         console.log('NOT PLAYER TURNNNNNN ')
       }
-      return context.players[context.activePlayer].id === event.playerID
+      return context.players[context.activePlayerIndex].id === event.playerID
     },
     playerIsAuctionMaster: (context, event) => {
       if (context.auctionMaster !== event.playerID) {
         console.log('PLAYER IS NOT AUCTION MASTER')
       }
       return context.auctionMaster === event.playerID
+    },
+    onFreeStageSquare: (context, event) => {
+      const position = context.players[context.activePlayerIndex].positionInfo
+      console.log('on', squares.getType(position.ring, position.square))
+      return squares.getType(position.ring, position.square) === squares.Types.FREE_STAGE
+    },
+    onThrowAgainSquare: (context, event) => {
+      const position = context.players[context.activePlayerIndex].positionInfo
+      return squares.getType(position.ring, position.square) === squares.Types.THROW_AGAIN
+    },
+    onSponsorSquare: (context, event) => {
+      const position = context.players[context.activePlayerIndex].positionInfo
+      return squares.getType(position.ring, position.square) === squares.Types.SPONSOR
     }
   }
 })
