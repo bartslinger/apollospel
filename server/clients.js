@@ -12,8 +12,6 @@ const registerClient = (socket, randomId, name) => {
     }
   }
   clients[randomId].socket = socket
-
-  console.log(clients)
 }
 
 module.exports = {

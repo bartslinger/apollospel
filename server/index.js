@@ -2,9 +2,12 @@ const express = require('express')
 const app = express()
 const https = require('https')
 const http = require('http')
-const fs = require('fs')
+const fs = require('fs').promises
+const path = require('path')
 
-const game = require('./game')
+const gameService = require('./game-service')
+const gameMachine = require('./game-machine')
+const { State } = require('xstate')
 const api = require('./api')
 
 var deploy = true
@@ -21,7 +24,6 @@ if (deploy) {
   }
   server = https.createServer(options, app)
 } else {
-  console.log('http')
   server = http.createServer(app)
 }
 const io = require('socket.io')(server)
@@ -31,7 +33,7 @@ io.on('connection', (socket) => {
 
   socket.on('register', (data) => {
     api.registerClient(socket, data)
-    game.send('CONNECT_CLIENT')
+    gameService.send('CONNECT_CLIENT')
   })
 
   socket.on('error', (err) => {
@@ -47,7 +49,19 @@ io.on('error', (err) => {
   console.log('errrororrororo', err)
 })
 
-game.start()
+const startGame = async () => {
+  const data = await fs.readFile(path.join(process.env.HOME, 'apollosave/01.json'))
+  const previousState = State.create(JSON.parse(data))
+  const resolvedState = gameMachine.resolveState(previousState)
+
+  try {
+    gameService.start(resolvedState)
+  } catch (err) {
+    console.log('gezeur', err)
+  }
+}
+
+startGame()
 
 server.listen(2001, () => {
   console.log('server up and running port 2001')

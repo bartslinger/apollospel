@@ -1,9 +1,7 @@
-const clients = require('./clients')
-const dice = require('./dice')
-
-const { Machine, interpret } = require('xstate')
+const { Machine } = require('xstate')
 
 const gameMachine = Machine({
+  id: 'gameMachine',
   initial: 'initializing',
   context: {
     players: [
@@ -27,7 +25,7 @@ const gameMachine = Machine({
   },
   on: {
     CONNECT_CLIENT: {
-      actions: () => console.log('new client')
+      // actions: () => console.log('new client')
     }
   },
   states: {
@@ -44,13 +42,4 @@ const gameMachine = Machine({
   }
 })
 
-const gameService = interpret(gameMachine).onTransition(state => {
-  console.log(state.event)
-
-  for (const i in clients.clients) {
-    // console.log(clients[i])
-    clients.clients[i].socket.emit('state', state.context)
-  }
-})
-
-module.exports = gameService
+module.exports = gameMachine
