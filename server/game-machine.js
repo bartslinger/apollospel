@@ -178,6 +178,18 @@ const gameMachine = Machine({
         }
       }
     },
+    rollingForLaunch: {
+      on: {
+        ROLL: {
+          target: 'attemptedLaunch',
+          actions: 'dieRoll',
+          cond: 'isPlayersTurn'
+        }
+      }
+    },
+    attemptedLaunch: {
+
+    },
     continueNextPlayer: {
       on: {
         '': {
@@ -318,6 +330,13 @@ const gameMachine = Machine({
       }
       players[context.activePlayerIndex].money += newMoney
 
+      return {
+        players: players
+      }
+    }),
+    launchAttempt: assign((context, event) => {
+      var players = JSON.parse(JSON.stringify(context.players))
+      // get dieRoll
       return {
         players: players
       }
