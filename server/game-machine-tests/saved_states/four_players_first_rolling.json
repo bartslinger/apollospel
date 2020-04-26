@@ -1,0 +1,49 @@
+{
+  "actions": [],
+  "activities": {},
+  "meta": {},
+  "events": [],
+  "value": "rolling",
+  "context": {
+    "players": [
+      {
+        "name": "Bart",
+        "id": "111"
+      },
+      {
+        "name": "Baaaart",
+        "id": "222"
+      },
+      {
+        "name": "Freek",
+        "id": "333"
+      },
+      {
+        "name": "Frisse Freek",
+        "id": "444"
+      }
+    ],
+    "activePlayerIndex": 0,
+    "dieRoll": -1,
+    "test": "",
+    "sponsorHatOwner": "",
+    "auctionMaster": "2",
+    "auctionBiddingIndex": -1,
+    "stageCards": []
+  },
+  "_event": {
+    "name": "xstate.init",
+    "data": {
+      "type": "xstate.init"
+    },
+    "$$type": "scxml",
+    "type": "external"
+  },
+  "_sessionid": "x:0",
+  "event": {
+    "type": "xstate.init"
+  },
+  "children": {},
+  "done": false,
+  "changed": true
+}
