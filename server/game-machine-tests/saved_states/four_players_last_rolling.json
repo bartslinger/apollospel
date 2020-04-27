@@ -25,6 +25,7 @@
     ],
     "activePlayerID": "444",
     "dieRoll": -1,
+    "stageCardsDeck": [10, 11, 12, 13],
     "test": "",
     "sponsorHatOwner": "",
     "auctionMaster": "2",

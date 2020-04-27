@@ -11,9 +11,9 @@ const getState = async (filename) => {
   return resolvedState
 }
 
-const getService = async (filename) => {
+const getService = async (filename, config = {}) => {
   const resolvedState = await getState(filename)
-  const machine = interpret(gameMachine).start(resolvedState)
+  const machine = interpret(gameMachine.withConfig(config)).start(resolvedState)
   return machine
 }
 
