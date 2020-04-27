@@ -10,6 +10,8 @@ test('first player joins the game', async () => {
 
     // Expect to become the active player
     expect(state.context.activePlayerID).toBe('123')
+    // And also the auction master
+    expect(state.context.auctionMaster).toBe('123')
   })
   service.send('REGISTER_PLAYER', { playerID: '123', playerName: 'Bart' })
 })
@@ -56,6 +58,26 @@ test('active player removed', async () => {
     expect(state.context.activePlayerID).toBe('222')
   })
   service.send('REMOVE_PLAYER', { playerID: '111' })
+})
+
+test('auction master removed', async () => {
+  const service = await testHelpers.getService('four_players_first_rolling')
+  service.onTransition(state => {
+    if (state.changed === undefined) return
+    expect(state.context.players.length).toBe(3)
+    expect(state.context.activePlayerID).toBe('111')
+    expect(state.context.auctionMaster).toBe('111')
+  })
+  service.send('REMOVE_PLAYER', { playerID: '444' })
+})
+
+test('last player removed', async () => {
+  const service = await testHelpers.getService('one_player')
+  service.onTransition(state => {
+    if (state.changed === undefined) return
+    expect(state.context.players.length).toBe(0)
+  })
+  service.send('REMOVE_PLAYER', { playerID: '123' })
 })
 
 // test('last player removed while rolling', async () => {

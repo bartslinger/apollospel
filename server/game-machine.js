@@ -40,29 +40,6 @@ const gameMachine = Machine({
         }
       }
     },
-    auctionDrawingCards: {
-      on: {
-        DRAW_CARDS_FOR_AUCTION: {
-          target: 'auctionBidding',
-          actions: [
-            'drawCardsForAuction',
-            'resetPlayersPassed',
-            'setBiddingIndexToAuctionMaster'
-          ],
-          cond: 'playerIsAuctionMaster'
-        }
-      }
-    },
-    auctionBidding: {
-      on: {
-        PLACE_BID: {
-
-        },
-        PASS: {
-
-        }
-      }
-    },
     rolling: {
       on: {
         ROLL: {
@@ -85,7 +62,7 @@ const gameMachine = Machine({
       on: {
         '': [
           {
-            target: 'continueNextPlayer',
+            target: 'checkAllPlayersRolled',
             actions: 'drawStageCard',
             cond: 'onFreeStageSquare'
           },
@@ -94,43 +71,32 @@ const gameMachine = Machine({
             cond: 'onThrowAgainSquare'
           },
           {
-            target: 'continueNextPlayer',
+            target: 'checkAllPlayersRolled',
             actions: 'claimSponsorHat',
             cond: 'onSponsorSquare'
           },
           {
-            target: 'continueNextPlayer'
+            target: 'checkAllPlayersRolled'
           }
         ]
       }
     },
-    launchingOrMoney: {
+    checkAllPlayersRolled: {
       on: {
-        '': {
-          target: 'continueNextPlayer',
-          actions: 'chooseMoney'
-        }
+        '': [
+          {
+            target: 'auctionDrawingCards',
+            cond: 'lastPlayerRolled'
+          },
+          {
+            target: 'rolling',
+            actions: 'activateNextPlayer'
+          }
+        ]
       }
     },
-    rollingForLaunch: {
-      on: {
-        ROLL: {
-          target: 'attemptedLaunch',
-          actions: 'dieRoll',
-          cond: 'isPlayersTurn'
-        }
-      }
-    },
-    attemptedLaunch: {
+    auctionDrawingCards: {
 
-    },
-    continueNextPlayer: {
-      on: {
-        '': {
-          target: 'rolling',
-          actions: 'activateNextPlayer'
-        }
-      }
     }
   }
 }, gameMachineConfig)

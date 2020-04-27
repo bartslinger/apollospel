@@ -1,6 +1,6 @@
 const { assign } = require('xstate')
 const squares = require('./squares')
-const _ = require('lodash')
+const gameMachineHelpers = require('./game-machine-helpers')
 
 const indexFromPlayerID = (context, playerID) => {
   var index = -1
@@ -94,26 +94,34 @@ const config = {
 
       // Just one player, become the active player
       var activePlayerID = context.activePlayerID
+      var auctionMaster = context.auctionMaster
       if (players.length === 1) {
         activePlayerID = event.playerID
+        auctionMaster = event.playerID
       }
 
       return {
         players: players,
-        activePlayerID: activePlayerID
+        activePlayerID: activePlayerID,
+        auctionMaster: auctionMaster
       }
     }),
     removePlayer: assign((context, event) => {
       var players = context.players
       var activePlayerID = context.activePlayerID
+      var auctionMaster = context.auctionMaster
       if (context.activePlayerID === event.playerID) {
         activePlayerID = getNextPlayerID(context, activePlayerID)
+      }
+      if (context.auctionMaster === event.playerID) {
+        auctionMaster = getNextPlayerID(context, auctionMaster)
       }
       const playerIndex = indexFromPlayerID(context, event.playerID)
       players.splice(playerIndex, 1)
       return {
         players: players,
-        activePlayerID: activePlayerID
+        activePlayerID: activePlayerID,
+        auctionMaster: auctionMaster
       }
     }),
     activateNextPlayer: assign((context, event) => {
@@ -147,18 +155,25 @@ const config = {
         players: players
       }
     }),
-    shuffleStageCards: (context, event) => {
-      return _.shuffle(context.stageCardsDeck.concat(context.stageCardsDiscarded))
-    },
     drawStageCard: assign((context, event) => {
       var players = context.players
       var stageCardsDeck = context.stageCardsDeck
+      var stageCardsDiscarded = context.stageCardsDiscarded
       const activePlayerIndex = indexFromPlayerID(context, context.activePlayerID)
       const card = stageCardsDeck.pop()
-      players[activePlayerIndex].stageCards.push(card)
+      if (card) {
+        players[activePlayerIndex].stageCards.push(card)
+      } else if (stageCardsDiscarded.length > 0) {
+        // shuffle the deck and try again
+        stageCardsDeck = gameMachineHelpers.shuffleStageCards(context)
+        stageCardsDiscarded = []
+        const card = stageCardsDeck.pop()
+        players[activePlayerIndex].stageCards.push(card)
+      }
       return {
         players: players,
-        stageCardsDeck: stageCardsDeck
+        stageCardsDeck: stageCardsDeck,
+        stageCardsDiscarded: stageCardsDiscarded
       }
     }),
     claimSponsorHat: assign((context, event) => {
@@ -190,12 +205,9 @@ const config = {
     isPlayersTurn: (context, event) => {
       return context.activePlayerID === event.playerID
     },
-    // playerIsAuctionMaster: (context, event) => {
-    //   if (context.auctionMaster !== event.playerID) {
-    //     console.log('PLAYER IS NOT AUCTION MASTER')
-    //   }
-    //   return context.auctionMaster === event.playerID
-    // },
+    lastPlayerRolled: (context, event) => {
+      return indexFromPlayerID(context, context.activePlayerID) === context.players.length - 1
+    },
     onFreeStageSquare: (context, event) => {
       const player = getActivePlayer(context)
       const position = player.positionInfo

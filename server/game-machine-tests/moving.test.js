@@ -85,3 +85,12 @@ test('player hits second barrier', async () => {
   })
   service.send('MOVE', { playerID: '111' })
 })
+
+test('last player moved, continue to auction', async () => {
+  const service = await testHelpers.getService('last_player_rolled_to_land_on_barrier')
+  service.onTransition(state => {
+    if (state.changed === undefined) return
+    expect(state.value).toBe('auctionDrawingCards')
+  })
+  service.send('MOVE', { playerID: '444' })
+})
