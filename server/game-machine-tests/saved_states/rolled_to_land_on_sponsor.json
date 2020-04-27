@@ -1,0 +1,69 @@
+{
+  "actions": [],
+  "activities": {},
+  "meta": {},
+  "events": [],
+  "value": "afterRoll",
+  "context": {
+    "players": [
+      {
+        "name": "Bart",
+        "id": "111",
+        "money": 100,
+        "positionInfo": {
+          "ring": 0,
+          "square": 6
+        }
+      },
+      {
+        "name": "Baaaart",
+        "id": "222",
+        "positionInfo": {
+          "ring": 0,
+          "square": 8
+        },
+        "stageCards": []
+      },
+      {
+        "name": "Freek",
+        "id": "333",
+        "positionInfo": {
+          "ring": 0,
+          "square": 0
+        }
+      },
+      {
+        "name": "Frisse Freek",
+        "id": "444",
+        "positionInfo": {
+          "ring": 0,
+          "square": 0
+        }
+      }
+    ],
+    "activePlayerID": "222",
+    "dieRoll": 5,
+    "stageCardsDeck": [10, 11, 12, 13],
+    "stageCardsDiscarded": [],
+    "test": "",
+    "sponsorHatOwner": "",
+    "auctionMaster": "2",
+    "auctionBiddingIndex": -1,
+    "stageCards": []
+  },
+  "_event": {
+    "name": "xstate.init",
+    "data": {
+      "type": "xstate.init"
+    },
+    "$$type": "scxml",
+    "type": "external"
+  },
+  "_sessionid": "x:0",
+  "event": {
+    "type": "xstate.init"
+  },
+  "children": {},
+  "done": false,
+  "changed": true
+}

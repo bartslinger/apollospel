@@ -160,13 +160,12 @@ const config = {
         players: players,
         stageCardsDeck: stageCardsDeck
       }
+    }),
+    claimSponsorHat: assign((context, event) => {
+      return {
+        sponsorHatOwner: context.activePlayerID
+      }
     })
-    // claimSponsorHat: assign((context, event) => {
-    //   const playerID = playerIDFromIndex(context, context.activePlayerIndex)
-    //   return {
-    //     sponsorHatOwner: playerID
-    //   }
-    // }),
     // chooseMoney: assign((context, event) => {
     //   var players = JSON.parse(JSON.stringify(context.players))
     //   var newMoney = 100
@@ -206,11 +205,12 @@ const config = {
       const player = getActivePlayer(context)
       const position = player.positionInfo
       return squares.getType(position.ring, position.square) === squares.Types.THROW_AGAIN
+    },
+    onSponsorSquare: (context, event) => {
+      const player = getActivePlayer(context)
+      const position = player.positionInfo
+      return squares.getType(position.ring, position.square) === squares.Types.SPONSOR
     }
-    // onSponsorSquare: (context, event) => {
-    //   const position = context.players[context.activePlayerIndex].positionInfo
-    //   return squares.getType(position.ring, position.square) === squares.Types.SPONSOR
-    // }
   }
 }
 

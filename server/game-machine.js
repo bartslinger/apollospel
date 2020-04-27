@@ -94,31 +94,15 @@ const gameMachine = Machine({
             cond: 'onThrowAgainSquare'
           },
           {
+            target: 'continueNextPlayer',
+            actions: 'claimSponsorHat',
+            cond: 'onSponsorSquare'
+          },
+          {
             target: 'continueNextPlayer'
           }
         ]
       }
-      // on: {
-      //   '': [
-      //     {
-      //       target: 'launchingOrMoney',
-      //       actions: 'drawStageCard',
-      //       cond: 'onFreeStageSquare'
-      //     },
-      //     {
-      //       target: 'rolling',
-      //       cond: 'onThrowAgainSquare'
-      //     },
-      //     {
-      //       target: 'launchingOrMoney',
-      //       actions: 'claimSponsorHat',
-      //       cond: 'onSponsorSquare'
-      //     },
-      //     {
-      //       target: 'launchingOrMoney'
-      //     }
-      //   ]
-      // }
     },
     launchingOrMoney: {
       on: {
