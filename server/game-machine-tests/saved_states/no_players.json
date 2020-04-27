@@ -9,6 +9,8 @@
     "activePlayerID": "",
     "dieRoll": -1,
     "stageCardsDeck": [10, 11, 12, 13],
+    "stageCardsDiscarded": [],
+    "stageCardsForAuction": [],
     "test": "",
     "sponsorHatOwner": "",
     "auctionMaster": "2",

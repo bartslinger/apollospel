@@ -80,13 +80,24 @@ test('last player removed', async () => {
   service.send('REMOVE_PLAYER', { playerID: '123' })
 })
 
-// test('last player removed while rolling', async () => {
-//   const service = await testHelpers.getService('four_players_last_rolling')
-//   service.onTransition(state => {
-//     if (state.changed === undefined) return
-//     expect(state.context.players.length).toBe(3)
-//     expect(state.context.activePlayerID).toBe('111')
-//     expect(state.value).toBe('auctionDrawingCards')
-//   })
-//   service.send('REMOVE_PLAYER', { playerID: '444' })
-// })
+test('last player removed while rolling', async () => {
+  const service = await testHelpers.getService('four_players_last_rolling')
+  service.onTransition(state => {
+    if (state.changed === undefined) return
+    expect(state.context.players.length).toBe(3)
+    expect(state.context.activePlayerID).toBe('111')
+    expect(state.value).toBe('auctionDrawingCards')
+  })
+  service.send('REMOVE_PLAYER', { playerID: '444' })
+})
+
+test('last player removed after rolling', async () => {
+  const service = await testHelpers.getService('last_player_rolled_to_land_on_barrier')
+  service.onTransition(state => {
+    if (state.changed === undefined) return
+    expect(state.context.players.length).toBe(3)
+    expect(state.context.activePlayerID).toBe('111')
+    expect(state.value).toBe('auctionDrawingCards')
+  })
+  service.send('REMOVE_PLAYER', { playerID: '444' })
+})

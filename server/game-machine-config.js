@@ -117,6 +117,7 @@ const config = {
         auctionMaster = getNextPlayerID(context, auctionMaster)
       }
       const playerIndex = indexFromPlayerID(context, event.playerID)
+      // last player rolling
       players.splice(playerIndex, 1)
       return {
         players: players,
@@ -180,6 +181,36 @@ const config = {
       return {
         sponsorHatOwner: context.activePlayerID
       }
+    }),
+    drawCardsForAuction: assign((context, event) => {
+      var stageCardsDeck = context.stageCardsDeck
+      var stageCardsForAuction = []
+      var i = 0
+      for (i; i < 3; i++) {
+        const stageCard = stageCardsDeck.pop()
+        if (!stageCard) break
+        stageCardsForAuction.push({
+          card: stageCard,
+          bidder: null,
+          value: 0
+        })
+      }
+      if (i < 3) {
+        stageCardsDeck = gameMachineHelpers.shuffleStageCards(context)
+      }
+      for (i; i < 3; i++) {
+        const stageCard = stageCardsDeck.pop()
+        if (!stageCard) break
+        stageCardsForAuction.push({
+          card: stageCard,
+          bidder: null,
+          value: 0
+        })
+      }
+      return {
+        stageCardsDeck: stageCardsDeck,
+        stageCardsForAuction: stageCardsForAuction
+      }
     })
     // chooseMoney: assign((context, event) => {
     //   var players = JSON.parse(JSON.stringify(context.players))
@@ -205,8 +236,11 @@ const config = {
     isPlayersTurn: (context, event) => {
       return context.activePlayerID === event.playerID
     },
-    lastPlayerRolled: (context, event) => {
+    isLastPlayer: (context, event) => {
       return indexFromPlayerID(context, context.activePlayerID) === context.players.length - 1
+    },
+    noStageCardsInStock: (context, event) => {
+      return context.stageCardsDeck.length + context.stageCardsDiscarded.length === 0
     },
     onFreeStageSquare: (context, event) => {
       const player = getActivePlayer(context)

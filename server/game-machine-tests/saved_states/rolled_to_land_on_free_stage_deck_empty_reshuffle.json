@@ -45,6 +45,7 @@
     "dieRoll": 3,
     "stageCardsDeck": [],
     "stageCardsDiscarded": [10, 11, 12, 13],
+    "stageCardsForAuction": [],
     "test": "",
     "sponsorHatOwner": "",
     "auctionMaster": "2",

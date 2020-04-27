@@ -37,18 +37,18 @@
         "id": "444",
         "positionInfo": {
           "ring": 0,
-          "square": 0
+          "square": 7
         }
       }
     ],
-    "activePlayerID": "222",
-    "dieRoll": 3,
+    "activePlayerID": "444",
+    "dieRoll": 1,
     "stageCardsDeck": [],
     "stageCardsDiscarded": [],
     "stageCardsForAuction": [],
     "test": "",
     "sponsorHatOwner": "",
-    "auctionMaster": "2",
+    "auctionMaster": "222",
     "auctionBiddingIndex": -1,
     "stageCards": []
   },

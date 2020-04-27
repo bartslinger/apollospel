@@ -46,7 +46,18 @@ const gameMachine = Machine({
           target: 'afterRoll',
           actions: 'dieRoll',
           cond: 'isPlayersTurn'
-        }
+        },
+        REMOVE_PLAYER: [
+          {
+            target: 'auctionDrawingCards',
+            actions: 'removePlayer',
+            cond: 'isLastPlayer'
+          },
+          {
+            target: 'rolling',
+            actions: 'removePlayer'
+          }
+        ]
       }
     },
     afterRoll: {
@@ -55,7 +66,18 @@ const gameMachine = Machine({
           target: 'executingSquareAction',
           actions: 'movePlayer',
           cond: 'isPlayersTurn'
-        }
+        },
+        REMOVE_PLAYER: [
+          {
+            target: 'auctionDrawingCards',
+            actions: 'removePlayer',
+            cond: 'isLastPlayer'
+          },
+          {
+            target: 'rolling',
+            actions: 'removePlayer'
+          }
+        ]
       }
     },
     executingSquareAction: {
@@ -86,7 +108,7 @@ const gameMachine = Machine({
         '': [
           {
             target: 'auctionDrawingCards',
-            cond: 'lastPlayerRolled'
+            cond: 'isLastPlayer'
           },
           {
             target: 'rolling',
@@ -96,6 +118,21 @@ const gameMachine = Machine({
       }
     },
     auctionDrawingCards: {
+      on: {
+        '': {
+          target: 'launchOrMoney',
+          cond: 'noStageCardsInStock'
+        },
+        DRAW_CARDS: {
+          target: 'auctionBidding',
+          actions: 'drawCardsForAuction'
+        }
+      }
+    },
+    auctionBidding: {
+
+    },
+    launchOrMoney: {
 
     }
   }

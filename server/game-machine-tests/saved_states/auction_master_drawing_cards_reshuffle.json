@@ -3,52 +3,34 @@
   "activities": {},
   "meta": {},
   "events": [],
-  "value": "afterRoll",
+  "value": "auctionDrawingCards",
   "context": {
     "players": [
       {
         "name": "Bart",
-        "id": "111",
-        "money": 100,
-        "positionInfo": {
-          "ring": 0,
-          "square": 6
-        }
+        "id": "111"
       },
       {
         "name": "Baaaart",
-        "id": "222",
-        "positionInfo": {
-          "ring": 0,
-          "square": 7
-        },
-        "stageCards": []
+        "id": "222"
       },
       {
         "name": "Freek",
-        "id": "333",
-        "positionInfo": {
-          "ring": 0,
-          "square": 0
-        }
+        "id": "333"
       },
       {
         "name": "Frisse Freek",
-        "id": "444",
-        "positionInfo": {
-          "ring": 0,
-          "square": 0
-        }
+        "id": "444"
       }
     ],
-    "activePlayerID": "222",
-    "dieRoll": 3,
-    "stageCardsDeck": [],
-    "stageCardsDiscarded": [],
+    "activePlayerID": "111",
+    "dieRoll": -1,
+    "stageCardsDeck": [11],
+    "stageCardsDiscarded": [12, 13, 14, 15],
     "stageCardsForAuction": [],
     "test": "",
     "sponsorHatOwner": "",
-    "auctionMaster": "2",
+    "auctionMaster": "444",
     "auctionBiddingIndex": -1,
     "stageCards": []
   },
