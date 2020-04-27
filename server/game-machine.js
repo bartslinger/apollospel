@@ -14,6 +14,17 @@ const indexFromPlayerID = (context, playerID) => {
   return index
 }
 
+const nextPlayerID = (context, playerID) => {
+  // loop through players
+  for (const i in context.players) {
+    if (context.players[i].id === playerID) {
+      const next = context.players[parseInt(i) + 1]
+      return next ? next.id : context.players[0].id
+    }
+  }
+  return '222'
+}
+
 const playerIDFromIndex = (context, index) => {
   var playerID = context.players[index].id
   return playerID
@@ -76,7 +87,8 @@ const gameMachine = Machine({
   initial: 'initializing',
   context: {
     players: [],
-    activePlayerIndex: 0,
+    activePlayerID: '',
+    // activePlayerIndex: 0,
     dieRoll: -1,
     test: '',
     sponsorHatOwner: '',
@@ -201,87 +213,59 @@ const gameMachine = Machine({
   }
 }, {
   actions: {
-    registerPlayer: assign({
-      players: (context, event) => {
-        const playerID = event.playerID
-        var players = JSON.parse(JSON.stringify(context.players))
-        for (const i in players) {
-          if (playerID === players[i].id) {
+    registerPlayer: assign((context, event) => {
+      const playerID = event.playerID
+      var players = context.players
+      for (const i in players) {
+        if (playerID === players[i].id) {
           // this is a match, update name
-            players[i].name = event.playerName
-            return players
-          }
+          players[i].name = event.playerName
+          return { players: players }
         }
-        // no match, create player
-        players.push({
-          name: event.playerName,
-          id: event.playerID,
-          money: 100,
-          passed: true,
-          positionInfo: {
-            ring: 0,
-            square: 0
-          }
-        })
-        return players
+      }
+      // no match, create player
+      players.push({
+        name: event.playerName,
+        id: event.playerID,
+        money: 100,
+        passed: true,
+        positionInfo: {
+          ring: 0,
+          square: 0
+        }
+      })
+
+      // Just one player, become the active player
+      var activePlayerID = context.activePlayerID
+      if (players.length === 1) {
+        activePlayerID = event.playerID
+      }
+
+      return {
+        players: players,
+        activePlayerID: activePlayerID
       }
     }),
     removePlayer: assign((context, event) => {
-      console.log(event)
-      const playerID = event.playerID
-      var players = JSON.parse(JSON.stringify(context.players))
-      var newactivePlayerIndex = context.activePlayerIndex
-
-      for (const i in players) {
-        if (playerID === players[i].id) {
-          // match, remove this one
-          players.splice(i, 1)
-          console.log('active player: ', context.activePlayerIndex, 'i:', i)
-          if (context.activePlayerIndex > parseInt(i)) {
-            console.log('PLAYERREMOVED BIGGER PLAYER ID')
-            newactivePlayerIndex -= 1
-          }
-          if (players.length > 0) {
-            newactivePlayerIndex %= (players.length)
-          } else {
-            newactivePlayerIndex = 0
-          }
-        }
+      var players = context.players
+      var activePlayerID = context.activePlayerID
+      if (context.activePlayerID === event.playerID) {
+        activePlayerID = nextPlayerID(context, activePlayerID)
       }
+      const playerIndex = indexFromPlayerID(context, event.playerID)
+      players.splice(playerIndex, 1)
       return {
         players: players,
-        activePlayerIndex: newactivePlayerIndex
-
+        activePlayerID: activePlayerID
       }
     }),
     dieRoll: assign({
       dieRoll: (context, event) => event.value
     }),
-    movePlayer: assign({
-      players: (context, event) => {
-        // event has the playerID and number of steps
-        var players = JSON.parse(JSON.stringify(context.players))
-        for (const i in players) {
-          if (context.activePlayerIndex.toString() === i) {
-            const before = players[i].positionInfo.square
-            var after = players[i].positionInfo.square + context.dieRoll
-            const crossOne = (before <= 8 && after > 8)
-            const crossTwo = (before <= 18 && after > 18)
-            if (crossOne && context.dieRoll < 2) {
-              after = 8
-            }
-            if (crossTwo && context.dieRoll < 2) {
-              after = 18
-            }
-            if (after > 19) {
-              players[i].money += 300
-            }
-            players[i].positionInfo.square = after
-            players[i].positionInfo.square %= 20
-            break
-          }
-        }
-        return players
+    movePlayer: assign((context, event) => {
+      var players = context.players
+      return {
+        players: players
       }
     }),
     activateNextPlayer: assign({
@@ -344,10 +328,7 @@ const gameMachine = Machine({
   },
   guards: {
     isPlayersTurn: (context, event) => {
-      if (context.players[context.activePlayerIndex].id !== event.playerID) {
-        console.log('NOT PLAYER TURNNNNNN ')
-      }
-      return context.players[context.activePlayerIndex].id === event.playerID
+      return context.activePlayerID === event.playerID
     },
     playerIsAuctionMaster: (context, event) => {
       if (context.auctionMaster !== event.playerID) {

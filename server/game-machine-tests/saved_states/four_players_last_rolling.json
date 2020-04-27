@@ -8,10 +8,22 @@
     "players": [
       {
         "name": "Bart",
-        "id": "123"
+        "id": "111"
+      },
+      {
+        "name": "Baaaart",
+        "id": "222"
+      },
+      {
+        "name": "Freek",
+        "id": "333"
+      },
+      {
+        "name": "Frisse Freek",
+        "id": "444"
       }
     ],
-    "activePlayerID": "123",
+    "activePlayerID": "444",
     "dieRoll": -1,
     "test": "",
     "sponsorHatOwner": "",

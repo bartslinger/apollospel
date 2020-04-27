@@ -6,7 +6,7 @@
   "value": "rolling",
   "context": {
     "players": [],
-    "activePlayerIndex": 0,
+    "activePlayerID": "",
     "dieRoll": -1,
     "test": "",
     "sponsorHatOwner": "",
