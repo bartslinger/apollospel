@@ -3,7 +3,7 @@
   "activities": {},
   "meta": {},
   "events": [],
-  "value": "auctionDrawingCards",
+  "value": "auctionTurningCards",
   "context": {
     "players": [
       {
@@ -28,12 +28,12 @@
     "stageCardsDeck": [10, 11, 12, 13],
     "stageCardsDiscarded": [14, 15, 16],
     "stageCardsForAuction": [],
-    "stageCardsGrid": [],
+    "stageCardsGrid": [17, 18, 19, 20, 21],
+    "stageCardsGridMask": [false, false, false, false, false],
     "test": "",
     "sponsorHatOwner": "",
     "auctionMaster": "444",
-    "auctionBiddingIndex": -1,
-    "stageCards": []
+    "auctionBiddingIndex": -1
   },
   "_event": {
     "name": "xstate.init",

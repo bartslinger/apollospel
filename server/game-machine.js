@@ -1,10 +1,8 @@
-const { Machine, assign } = require('xstate')
-var _ = require('lodash')
+const { Machine } = require('xstate')
 
-const stageCards = require('./stage-cards')
 const gameMachineConfig = require('./game-machine-config')
 
-const STAGECARDS_GRID_SIZE = 10
+const STAGECARDS_GRID_SIZE = 12
 
 const gameMachine = Machine({
   id: 'gameMachine',
@@ -58,7 +56,7 @@ const gameMachine = Machine({
         },
         REMOVE_PLAYER: [
           {
-            target: 'auctionDrawingCards',
+            target: 'auctionTurningCards',
             actions: 'removePlayer',
             cond: 'isLastPlayer'
           },
@@ -78,7 +76,7 @@ const gameMachine = Machine({
         },
         REMOVE_PLAYER: [
           {
-            target: 'auctionDrawingCards',
+            target: 'auctionTurningCards',
             actions: 'removePlayer',
             cond: 'isLastPlayer'
           },
@@ -130,10 +128,10 @@ const gameMachine = Machine({
     checkAllPlayersRolled: {
       on: {
         '': [
-          // {
-          //   target: 'auctionDrawingCards',
-          //   cond: 'isLastPlayer'
-          // },
+          {
+            target: 'auctionTurningCards',
+            cond: 'isLastPlayer'
+          },
           {
             target: 'rolling',
             actions: 'activateNextPlayer'
@@ -141,17 +139,15 @@ const gameMachine = Machine({
         ]
       }
     },
-    auctionDrawingCards: {
+    auctionTurningCards: {
       on: {
-        '': {
-          target: 'launchOrMoney',
-          cond: 'noStageCardsInStock'
-        },
-        DRAW_CARDS: {
-          target: 'auctionBidding',
-          actions: 'drawCardsForAuction'
+        TURN_STAGE_CARD: {
+          actions: 'turnStageCard'
         }
       }
+    },
+    auctionCollectingCards: {
+
     },
     auctionBidding: {
 

@@ -1,0 +1,72 @@
+{
+  "actions": [],
+  "activities": {},
+  "meta": {},
+  "events": [],
+  "value": "collectingFreeStage",
+  "context": {
+    "players": [
+      {
+        "name": "Bart",
+        "id": "111",
+        "money": 100,
+        "positionInfo": {
+          "orbit": 0,
+          "square": 6
+        }
+      },
+      {
+        "name": "Baaaart",
+        "id": "222",
+        "positionInfo": {
+          "orbit": 0,
+          "square": 10
+        },
+        "stageCards": []
+      },
+      {
+        "name": "Freek",
+        "id": "333",
+        "positionInfo": {
+          "orbit": 0,
+          "square": 0
+        }
+      },
+      {
+        "name": "Frisse Freek",
+        "id": "444",
+        "positionInfo": {
+          "orbit": 0,
+          "square": 0
+        }
+      }
+    ],
+    "activePlayerID": "222",
+    "dieRoll": 3,
+    "stageCardsDeck": [],
+    "stageCardsDiscarded": [10, 11, 12, 13],
+    "stageCardsForAuction": [],
+    "stageCardsGrid": [14, 15, 16, 17, 18],
+    "stageCardsGridMask": [false, false, true, false, false],
+    "test": "",
+    "sponsorHatOwner": "",
+    "auctionMaster": "2",
+    "auctionBiddingIndex": -1,
+    "stageCards": []
+  },
+  "_event": {
+    "name": "xstate.init",
+    "data": {
+      "type": "xstate.init"
+    },
+    "$$type": "scxml",
+    "type": "external"
+  },
+  "_sessionid": "x:0",
+  "event": {
+    "type": "xstate.init"
+  },
+  "children": {},
+  "done": false,
+  "changed": true
+}

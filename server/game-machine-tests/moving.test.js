@@ -98,7 +98,7 @@ test('last player moved, continue to auction', async () => {
   const service = await testHelpers.getService('last_player_rolled_to_land_on_barrier')
   service.onTransition(state => {
     if (state.changed === undefined) return
-    expect(state.value).toBe('rolling') /// /?////// MOET TERUG NAAR auctionDrawingCards
+    expect(state.value).toBe('auctionTurningCards')
   })
   service.send('MOVE', { playerID: '444' })
 })
@@ -107,7 +107,7 @@ test('last player moved, no stage cards left, continue launch or money', async (
   const service = await testHelpers.getService('last_player_rolled_to_land_on_barrier_stack_depleted')
   service.onTransition(state => {
     if (state.changed === undefined) return
-    expect(state.value).toBe('rolling') /// /?////// MOET TERUG NAAR auctionDrawingCards
+    expect(state.value).toBe('auctionTurningCards')
   })
   service.send('MOVE', { playerID: '444' })
 })

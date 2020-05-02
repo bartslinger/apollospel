@@ -2,6 +2,7 @@ const { assign } = require('xstate')
 const squares = require('./squares')
 const gameMachineHelpers = require('./game-machine-helpers')
 const _ = require('lodash')
+const stageCards = require('./stage-cards')
 
 const indexFromPlayerID = (context, playerID) => {
   var index = -1
@@ -25,10 +26,10 @@ const getNextPlayerID = (context, playerID) => {
   throw (Error('PlayerID not found'))
 }
 
-const playerIDFromIndex = (context, index) => {
-  var playerID = context.players[index].id
-  return playerID
-}
+// const playerIDFromIndex = (context, index) => {
+//   var playerID = context.players[index].id
+//   return playerID
+// }
 
 const getActivePlayer = (context) => {
   const playerIndex = indexFromPlayerID(context, context.activePlayerID)
@@ -72,7 +73,7 @@ const getActivePlayer = (context) => {
 const config = {
   actions: {
     initializeStageCards: assign((context, event) => {
-      const shuffled = _.shuffle(Array(44).fill(0).map((v, i) => i))
+      const shuffled = _.shuffle(Array(stageCards.length).fill(0).map((v, i) => i))
       return {
         stageCardsGrid: shuffled.slice(0, 12),
         stageCardsDeck: shuffled.slice(12)
@@ -189,6 +190,7 @@ const config = {
       const playerIndex = indexFromPlayerID(context, event.playerID)
       var players = context.players
       var stageCardsDeck = context.stageCardsDeck
+      var stageCardsDiscarded = context.stageCardsDiscarded
       var stageCardsGrid = context.stageCardsGrid
       var stageCardsGridMask = context.stageCardsGridMask
 
@@ -201,12 +203,22 @@ const config = {
           const newCard = stageCardsDeck.pop()
           if (newCard) {
             stageCardsGrid[i] = newCard
+          } else {
+            // shuffle deck
+            stageCardsDeck = _.shuffle(stageCardsDiscarded)
+            stageCardsDiscarded = []
+            // try again
+            const newCard = stageCardsDeck.pop()
+            if (newCard) {
+              stageCardsGrid[i] = newCard
+            }
           }
           break
         }
       }
       return {
         players: players,
+        stageCardsDiscarded: stageCardsDiscarded,
         stageCardsDeck: stageCardsDeck,
         stageCardsGrid: stageCardsGrid,
         stageCardsGridMask: stageCardsGridMask

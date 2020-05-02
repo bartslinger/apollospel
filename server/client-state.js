@@ -16,7 +16,10 @@ module.exports = {
 
     const eventType = objectPath.get(state, 'event.type')
 
-    const eventsWithData = ['MOVE', 'TURN_STAGE_CARD']
+    const eventsWithData = [
+      'MOVE',
+      'TURN_STAGE_CARD'
+    ]
     if (eventsWithData.indexOf(eventType) !== -1) {
       clientState.eventInfo = state.context.eventInfo
     }

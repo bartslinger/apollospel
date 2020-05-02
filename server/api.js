@@ -72,6 +72,7 @@ module.exports = {
     if (playerID) {
       gameService.send({
         type: 'TURN_STAGE_CARD',
+        playerID: playerID,
         cardGridIndex: parseInt(data.data)
       })
     }
@@ -80,6 +81,7 @@ module.exports = {
     const playerID = clients.clients[socket.id].playerID
     if (playerID) {
       gameService.send({
+        playerID: playerID,
         type: 'COLLECT_STAGE_CARDS'
       })
     }

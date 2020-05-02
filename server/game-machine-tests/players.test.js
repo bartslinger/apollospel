@@ -86,7 +86,7 @@ test('last player removed while rolling', async () => {
     if (state.changed === undefined) return
     expect(state.context.players.length).toBe(3)
     expect(state.context.activePlayerID).toBe('111')
-    expect(state.value).toBe('auctionDrawingCards')
+    expect(state.value).toBe('auctionTurningCards')
   })
   service.send('REMOVE_PLAYER', { playerID: '444' })
 })
@@ -97,7 +97,7 @@ test('last player removed after rolling', async () => {
     if (state.changed === undefined) return
     expect(state.context.players.length).toBe(3)
     expect(state.context.activePlayerID).toBe('111')
-    expect(state.value).toBe('auctionDrawingCards')
+    expect(state.value).toBe('auctionTurningCards')
   })
   service.send('REMOVE_PLAYER', { playerID: '444' })
 })
