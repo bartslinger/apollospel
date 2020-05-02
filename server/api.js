@@ -3,11 +3,15 @@ const clients = require('./clients')
 const gameService = require('./game-service')
 const dice = require('./dice')
 const { ValidationError } = require('./error')
+const stageCards = require('./stage-cards')
 
 module.exports = {
+  getStageCards: (_socket, _data, cb) => {
+    cb({ error: null, data: stageCards })
+  },
   refresh: (socket, data, cb) => {
     gameService.send('REFRESH')
-    cb(null, null)
+    // cb(null, null)
   },
   registerPlayer: (socket, data, cb) => {
     const id = objectPath.get(data, 'playerID')
@@ -25,7 +29,7 @@ module.exports = {
       playerID: idString,
       playerName: name
     })
-    cb(null, null)
+    // cb(null, null)
   },
   leave: (socket, data, cb) => {
     console.log('leave')

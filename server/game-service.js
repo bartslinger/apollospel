@@ -2,6 +2,7 @@ const { interpret } = require('xstate')
 const fs = require('fs').promises
 const path = require('path')
 const clients = require('./clients')
+const clientState = require('./client-state')
 
 const gameMachine = require('./game-machine')
 
@@ -40,38 +41,7 @@ const gameService = interpret(gameMachine).onTransition(state => {
 
   for (const c in clients.clients) {
     const client = clients.clients[c]
-
-    var clientStateUpdate = {
-      playerInfos: [],
-      yourPlayerIndex: -1,
-      activePlayerIndex: state.context.activePlayerIndex,
-      sponsorIndex: -1,
-      auctionMasterIndex: 0,
-      gamePhase: state.value,
-      auctionInfo: {
-        bettingIndex: 0
-      },
-      dieRoll: state.context.dieRoll
-    }
-
-    for (const i in state.context.players) {
-      const player = {
-        name: state.context.players[i].name,
-        money: state.context.players[i].money,
-        positionInfo: state.context.players[i].positionInfo,
-        stageInfos: getStageInfos(state.context.stageCards, state.context.players[i].id)
-      }
-      clientStateUpdate.playerInfos.push(player)
-
-      // Does this player have the sponsor hat?
-      if (state.context.players[i].id === state.context.sponsorHatOwner) {
-        clientStateUpdate.sponsorIndex = parseInt(i)
-      }
-
-      if (state.context.players[i].id === client.playerID) {
-        clientStateUpdate.yourPlayerIndex = parseInt(i)
-      }
-    }
+    const clientStateUpdate = clientState.deriveClientState(state, client.playerID)
     client.socket.emit('state', clientStateUpdate)
     client.socket.emit('context', state.context)
   }

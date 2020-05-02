@@ -83,7 +83,7 @@ const squares = [
 
 module.exports = {
   Types,
-  getType: (ring, square) => {
-    return squares[ring][square]
+  getType: (orbit, square) => {
+    return squares[orbit][square]
   }
 }

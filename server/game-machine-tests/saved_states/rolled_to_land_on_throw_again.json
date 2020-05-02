@@ -11,7 +11,7 @@
         "id": "111",
         "money": 100,
         "positionInfo": {
-          "ring": 0,
+          "orbit": 0,
           "square": 6
         }
       },
@@ -19,7 +19,7 @@
         "name": "Baaaart",
         "id": "222",
         "positionInfo": {
-          "ring": 0,
+          "orbit": 0,
           "square": 3
         },
         "stageCards": []
@@ -28,7 +28,7 @@
         "name": "Freek",
         "id": "333",
         "positionInfo": {
-          "ring": 0,
+          "orbit": 0,
           "square": 0
         }
       },
@@ -36,7 +36,7 @@
         "name": "Frisse Freek",
         "id": "444",
         "positionInfo": {
-          "ring": 0,
+          "orbit": 0,
           "square": 0
         }
       }
@@ -46,6 +46,7 @@
     "stageCardsDeck": [10, 11, 12, 13],
     "stageCardsDiscarded": [],
     "stageCardsForAuction": [],
+    "stageCardsGrid": [],
     "test": "",
     "sponsorHatOwner": "",
     "auctionMaster": "2",

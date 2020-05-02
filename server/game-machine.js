@@ -4,6 +4,8 @@ var _ = require('lodash')
 const stageCards = require('./stage-cards')
 const gameMachineConfig = require('./game-machine-config')
 
+const STAGECARDS_GRID_SIZE = 10
+
 const gameMachine = Machine({
   id: 'gameMachine',
   initial: 'initializing',
@@ -16,7 +18,13 @@ const gameMachine = Machine({
     sponsorHatOwner: '',
     auctionMaster: '2',
     auctionBiddingIndex: -1,
-    stageCards: []
+    stageCards: [],
+    stageCardsDeck: [],
+    stageCardsDiscarded: [],
+    stageCardsGrid: Array(STAGECARDS_GRID_SIZE).fill(-1),
+    eventInfo: {
+      type: ''
+    }
   },
   on: {
     REGISTER_PLAYER: {
@@ -32,7 +40,7 @@ const gameMachine = Machine({
   states: {
     initializing: {
       entry: [
-        assign({ stageCards: stageCards })
+        'initializeStageCards'
       ],
       on: {
         '': {

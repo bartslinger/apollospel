@@ -28,6 +28,7 @@
     "stageCardsDeck": [10, 11, 12, 13],
     "stageCardsDiscarded": [14, 15, 16],
     "stageCardsForAuction": [],
+    "stageCardsGrid": [],
     "test": "",
     "sponsorHatOwner": "",
     "auctionMaster": "444",

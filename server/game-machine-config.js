@@ -1,6 +1,7 @@
 const { assign } = require('xstate')
 const squares = require('./squares')
 const gameMachineHelpers = require('./game-machine-helpers')
+const _ = require('lodash')
 
 const indexFromPlayerID = (context, playerID) => {
   var index = -1
@@ -70,6 +71,13 @@ const getActivePlayer = (context) => {
 
 const config = {
   actions: {
+    initializeStageCards: assign((context, event) => {
+      const shuffled = _.shuffle(Array(44).fill(0).map((v, i) => i))
+      return {
+        stageCardsGrid: shuffled.slice(0, 12),
+        stageCardsDeck: shuffled.slice(12)
+      }
+    }),
     registerPlayer: assign((context, event) => {
       const playerID = event.playerID
       var players = context.players
@@ -85,11 +93,11 @@ const config = {
         name: event.playerName,
         id: event.playerID,
         money: 100,
-        passed: true,
         positionInfo: {
-          ring: 0,
+          orbit: 0,
           square: 0
-        }
+        },
+        stageCards: []
       })
 
       // Just one player, become the active player
@@ -140,7 +148,7 @@ const config = {
       var newSquare = players[playerIndex].positionInfo.square + context.dieRoll
       // Get money when crossing start
       if (newSquare > 19) {
-        players[playerIndex].money += (300 - 100 * players[playerIndex].positionInfo.ring)
+        players[playerIndex].money += (300 - 100 * players[playerIndex].positionInfo.orbit)
       }
       // First barrier
       if (startSquare <= 8 && newSquare > 8 && context.dieRoll < 2) {
@@ -153,7 +161,15 @@ const config = {
       newSquare %= 20
       players[playerIndex].positionInfo.square = newSquare
       return {
-        players: players
+        players: players,
+        eventInfo: {
+          type: 'move',
+          playerIndex: playerIndex,
+          fromOrbit: players[playerIndex].positionInfo.orbit,
+          toOrbit: players[playerIndex].positionInfo.orbit,
+          fromSquare: startSquare,
+          toSquare: newSquare
+        }
       }
     }),
     drawStageCard: assign((context, event) => {
@@ -245,17 +261,17 @@ const config = {
     onFreeStageSquare: (context, event) => {
       const player = getActivePlayer(context)
       const position = player.positionInfo
-      return squares.getType(position.ring, position.square) === squares.Types.FREE_STAGE
+      return squares.getType(position.orbit, position.square) === squares.Types.FREE_STAGE
     },
     onThrowAgainSquare: (context, event) => {
       const player = getActivePlayer(context)
       const position = player.positionInfo
-      return squares.getType(position.ring, position.square) === squares.Types.THROW_AGAIN
+      return squares.getType(position.orbit, position.square) === squares.Types.THROW_AGAIN
     },
     onSponsorSquare: (context, event) => {
       const player = getActivePlayer(context)
       const position = player.positionInfo
-      return squares.getType(position.ring, position.square) === squares.Types.SPONSOR
+      return squares.getType(position.orbit, position.square) === squares.Types.SPONSOR
     }
   }
 }

@@ -33,6 +33,7 @@ if (deploy) {
 const services = {
   'admin.movePlayer': admin.movePlayer,
   'admin.saveState': admin.saveState,
+  getStageCards: api.getStageCards,
   refresh: api.refresh,
   register: api.registerPlayer,
   leave: api.leave,
