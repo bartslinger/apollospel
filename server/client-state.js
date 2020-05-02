@@ -11,6 +11,7 @@ module.exports = {
       gamePhase: state.value,
       dieRoll: state.context.dieRoll,
       stageCardsGrid: [],
+      stageCardsForAuction: state.context.stageCardsForAuction,
       eventInfo: {}
     }
 

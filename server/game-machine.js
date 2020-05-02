@@ -21,6 +21,7 @@ const gameMachine = Machine({
     stageCardsDiscarded: [],
     stageCardsGrid: Array(STAGECARDS_GRID_SIZE).fill(-1),
     stageCardsGridMask: Array(STAGECARDS_GRID_SIZE).fill(false),
+    stageCardsForAuction: [],
     eventInfo: {
       type: ''
     }
@@ -141,13 +142,22 @@ const gameMachine = Machine({
     },
     auctionTurningCards: {
       on: {
+        '': {
+          target: 'auctionCollectingCards',
+          cond: 'allAuctionCardsTurned'
+        },
         TURN_STAGE_CARD: {
           actions: 'turnStageCard'
         }
       }
     },
     auctionCollectingCards: {
-
+      on: {
+        COLLECT_STAGE_CARDS: {
+          target: 'auctionBidding',
+          actions: 'collectStageCardsForAuction'
+        }
+      }
     },
     auctionBidding: {
 

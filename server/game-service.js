@@ -42,6 +42,7 @@ const gameService = interpret(gameMachine).onTransition(state => {
   for (const c in clients.clients) {
     const client = clients.clients[c]
     const clientStateUpdate = clientState.deriveClientState(state, client.playerID)
+    console.log(clientStateUpdate)
     client.socket.emit('state', clientStateUpdate)
     client.socket.emit('context', state.context)
   }

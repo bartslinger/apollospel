@@ -224,6 +224,24 @@ const config = {
         stageCardsGridMask: stageCardsGridMask
       }
     }),
+    collectStageCardsForAuction: assign((context, event) => {
+      var stageCardsGrid = context.stageCardsGrid
+      var stageCardsGridMask = context.stageCardsGridMask
+      var stageCardsForAuction = []
+
+      for (const i in stageCardsGridMask) {
+        if (stageCardsGridMask[i]) {
+          stageCardsGridMask[i] = false
+          stageCardsForAuction.push(stageCardsGrid[i])
+          stageCardsGrid[i] = -1
+        }
+      }
+      return {
+        stageCardsGrid: stageCardsGrid,
+        stageCardsGridMask: stageCardsGridMask,
+        stageCardsForAuction: stageCardsForAuction
+      }
+    }),
     drawStageCard: assign((context, event) => {
       var players = context.players
       var stageCardsDeck = context.stageCardsDeck
@@ -324,6 +342,10 @@ const config = {
       const player = getActivePlayer(context)
       const position = player.positionInfo
       return squares.getType(position.orbit, position.square) === squares.Types.SPONSOR
+    },
+    allAuctionCardsTurned: (context, event) => {
+      // three cards selected
+      return context.stageCardsGridMask.filter((v) => v === true).length === 3
     }
   }
 }

@@ -8,10 +8,34 @@ test('turn a stage card', async () => {
     if (state.changed === undefined) return
 
     expect(state.value).toBe('auctionTurningCards')
-    // expect(state.context.activePlayerID).toBe('444')
     expect(state.context.stageCardsGridMask).toEqual([false, true, false, false, false])
   })
   service.send('TURN_STAGE_CARD', { playerID: '444', cardGridIndex: 1 })
+})
+
+test('turn third stage card and proceed to collect', async () => {
+  const service = await testHelpers.getService('auction_master_drawing_third_card')
+  service.onTransition(state => {
+    if (state.changed === undefined) return
+
+    expect(state.value).toBe('auctionCollectingCards')
+    expect(state.context.stageCardsGridMask).toEqual([true, true, false, true, false])
+  })
+
+  service.send('TURN_STAGE_CARD', { playerID: '444', cardGridIndex: 3 })
+})
+
+test('collect cards for the auction from grid', async () => {
+  const service = await testHelpers.getService('auction_master_collecting_cards_from_grid')
+  service.onTransition(state => {
+    if (state.changed === undefined) return
+
+    expect(state.value).toBe('auctionBidding')
+    expect(state.context.stageCardsGridMask).toEqual([false, false, false, false, false])
+    expect(state.context.stageCardsGrid).toEqual([-1, -1, 19, -1, 21])
+    expect(state.context.stageCardsForAuction).toEqual([17, 18, 20])
+  })
+  service.send('COLLECT_STAGE_CARDS', { playerID: '444' })
 })
 
 // test('draw three cards', async () => {

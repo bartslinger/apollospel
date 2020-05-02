@@ -3,55 +3,37 @@
   "activities": {},
   "meta": {},
   "events": [],
-  "value": "afterRoll",
+  "value": "auctionTurningCards",
   "context": {
     "players": [
       {
         "name": "Bart",
-        "id": "111",
-        "money": 100,
-        "positionInfo": {
-          "orbit": 2,
-          "square": 18
-        }
+        "id": "111"
       },
       {
         "name": "Baaaart",
-        "id": "222",
-        "positionInfo": {
-          "orbit": 0,
-          "square": 0
-        }
+        "id": "222"
       },
       {
         "name": "Freek",
-        "id": "333",
-        "positionInfo": {
-          "orbit": 0,
-          "square": 0
-        }
+        "id": "333"
       },
       {
         "name": "Frisse Freek",
-        "id": "444",
-        "positionInfo": {
-          "orbit": 0,
-          "square": 0
-        }
+        "id": "444"
       }
     ],
     "activePlayerID": "111",
-    "dieRoll": 3,
+    "dieRoll": -1,
     "stageCardsDeck": [10, 11, 12, 13],
-    "stageCardsDiscarded": [],
+    "stageCardsDiscarded": [14, 15, 16],
     "stageCardsForAuction": [],
-    "stageCardsGrid": [],
-    "stageCardsGridMask": [],
+    "stageCardsGrid": [17, 18, 19, 20, 21],
+    "stageCardsGridMask": [true, true, false, false, false],
     "test": "",
     "sponsorHatOwner": "",
-    "auctionMaster": "2",
-    "auctionBiddingIndex": -1,
-    "stageCards": []
+    "auctionMaster": "444",
+    "auctionBiddingIndex": -1
   },
   "_event": {
     "name": "xstate.init",

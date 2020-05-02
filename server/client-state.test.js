@@ -30,7 +30,7 @@ test('derive client state', () => {
       dieRoll: 5,
       stageCardsDeck: [],
       stageCardsDiscarded: [],
-      stageCardsForAuction: [],
+      stageCardsForAuction: [1, 2, 0],
       stageCardsGrid: [-1, -1, 10, -1, 9, 12, 11],
       stageCardsGridMask: [false, false, true, false, false, false, false],
       sponsorHatOwner: '222',
@@ -80,6 +80,7 @@ test('derive client state', () => {
     }
   ])
 
+  expect(clientStateUpdate.stageCardsForAuction).toEqual([1, 2, 0])
   expect(clientStateUpdate.stageCardsGrid).toEqual([-2, -2, 10, -2, -1, -1, -1])
   expect(clientStateUpdate.yourPlayerIndex).toBe(1)
   expect(clientStateUpdate.activePlayerIndex).toBe(0)
