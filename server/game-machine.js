@@ -177,7 +177,11 @@ const gameMachine = Machine({
       }
     },
     auctionCollectingCardsAfterBidding: {
-
+      on: {
+        COLLECT_AFTER_AUCTION: {
+          target: 'rolling'
+        }
+      }
     },
     launchOrMoney: {
 

@@ -42,7 +42,8 @@ const services = {
   turnCardInGrid: api.turnCardInGrid,
   collectCardsFromGrid: api.collectCardsFromGrid,
   pass: api.passBid,
-  bid: api.placeBid
+  bid: api.placeBid,
+  doneCollectingCardsAfterStageAuctionYeah: api.collectAfterAuction
 }
 
 const io = require('socket.io')(server)

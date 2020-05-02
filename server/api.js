@@ -114,5 +114,14 @@ module.exports = {
         playerID: playerID
       })
     }
+  },
+  collectAfterAuction: (socket, data, cb) => {
+    const playerID = clients.clients[socket.id].playerID
+    if (playerID) {
+      gameService.send({
+        type: 'COLLECT_AFTER_AUCTION',
+        playerID: playerID
+      })
+    }
   }
 }
