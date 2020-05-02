@@ -3,7 +3,7 @@
   "activities": {},
   "meta": {},
   "events": [],
-  "value": "afterRoll",
+  "value": "collectingFreeStage",
   "context": {
     "players": [
       {
@@ -20,7 +20,7 @@
         "id": "222",
         "positionInfo": {
           "orbit": 0,
-          "square": 7
+          "square": 10
         },
         "stageCards": []
       },
@@ -47,7 +47,7 @@
     "stageCardsDiscarded": [],
     "stageCardsForAuction": [],
     "stageCardsGrid": [14, 15, 16, 17, 18],
-    "stageCardsGridMask": [false, false, false, false, false],
+    "stageCardsGridMask": [false, false, true, false, false],
     "test": "",
     "sponsorHatOwner": "",
     "auctionMaster": "2",

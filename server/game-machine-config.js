@@ -172,6 +172,46 @@ const config = {
         }
       }
     }),
+    turnStageCard: assign((context, event) => {
+      var stageCardsGridMask = context.stageCardsGridMask
+      if (stageCardsGridMask[event.cardGridIndex] !== undefined) {
+        stageCardsGridMask[event.cardGridIndex] = true
+      }
+      return {
+        stageCardsGridMask: stageCardsGridMask,
+        eventInfo: {
+          type: 'turnCard',
+          turnCardIndex: event.cardGridIndex
+        }
+      }
+    }),
+    collectStageCard: assign((context, event) => {
+      const playerIndex = indexFromPlayerID(context, event.playerID)
+      var players = context.players
+      var stageCardsDeck = context.stageCardsDeck
+      var stageCardsGrid = context.stageCardsGrid
+      var stageCardsGridMask = context.stageCardsGridMask
+
+      for (const i in stageCardsGridMask) {
+        if (stageCardsGridMask[i]) {
+          stageCardsGridMask[i] = false
+          players[playerIndex].stageCards.push(stageCardsGrid[i])
+          stageCardsGrid[i] = -1
+          // add a card from the deck to the grid
+          const newCard = stageCardsDeck.pop()
+          if (newCard) {
+            stageCardsGrid[i] = newCard
+          }
+          break
+        }
+      }
+      return {
+        players: players,
+        stageCardsDeck: stageCardsDeck,
+        stageCardsGrid: stageCardsGrid,
+        stageCardsGridMask: stageCardsGridMask
+      }
+    }),
     drawStageCard: assign((context, event) => {
       var players = context.players
       var stageCardsDeck = context.stageCardsDeck

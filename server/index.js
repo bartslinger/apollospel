@@ -39,7 +39,7 @@ const services = {
   leave: api.leave,
   roll: api.roll,
   moveAfterRoll: api.moveAfterRoll,
-  drawCardsForAuction: api.drawCardsForAuction
+  pickCardFromGrid: api.pickCardFromGrid
 }
 
 const io = require('socket.io')(server)

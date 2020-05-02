@@ -22,6 +22,7 @@ const gameMachine = Machine({
     stageCardsDeck: [],
     stageCardsDiscarded: [],
     stageCardsGrid: Array(STAGECARDS_GRID_SIZE).fill(-1),
+    stageCardsGridMask: Array(STAGECARDS_GRID_SIZE).fill(false),
     eventInfo: {
       type: ''
     }
@@ -92,8 +93,7 @@ const gameMachine = Machine({
       on: {
         '': [
           {
-            target: 'checkAllPlayersRolled',
-            actions: 'drawStageCard',
+            target: 'turningFreeStage',
             cond: 'onFreeStageSquare'
           },
           {
@@ -111,13 +111,29 @@ const gameMachine = Machine({
         ]
       }
     },
+    turningFreeStage: {
+      on: {
+        TURN_STAGE_CARD: {
+          target: 'collectingFreeStage',
+          actions: 'turnStageCard'
+        }
+      }
+    },
+    collectingFreeStage: {
+      on: {
+        COLLECT_STAGE_CARDS: {
+          target: 'checkAllPlayersRolled',
+          actions: 'collectStageCard'
+        }
+      }
+    },
     checkAllPlayersRolled: {
       on: {
         '': [
-          {
-            target: 'auctionDrawingCards',
-            cond: 'isLastPlayer'
-          },
+          // {
+          //   target: 'auctionDrawingCards',
+          //   cond: 'isLastPlayer'
+          // },
           {
             target: 'rolling',
             actions: 'activateNextPlayer'

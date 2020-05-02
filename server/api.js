@@ -67,6 +67,23 @@ module.exports = {
       })
     }
   },
+  turnCardInGrid: (socket, data, cb) => {
+    const playerID = clients.clients[socket.id].playerID
+    if (playerID) {
+      gameService.send({
+        type: 'TURN_STAGE_CARD',
+        cardGridIndex: parseInt(data.data)
+      })
+    }
+  },
+  collectCardsFromGrid: (socket, data, cb) => {
+    const playerID = clients.clients[socket.id].playerID
+    if (playerID) {
+      gameService.send({
+        type: 'COLLECT_STAGE_CARDS'
+      })
+    }
+  },
   drawCardsForAuction: (socket, data, cb) => {
     const playerID = clients.clients[socket.id].playerID
     if (playerID) {

@@ -3,7 +3,7 @@
   "activities": {},
   "meta": {},
   "events": [],
-  "value": "afterRoll",
+  "value": "turningFreeStage",
   "context": {
     "players": [
       {
@@ -20,7 +20,7 @@
         "id": "222",
         "positionInfo": {
           "orbit": 0,
-          "square": 7
+          "square": 10
         },
         "stageCards": []
       },

@@ -1,3 +1,5 @@
+const objectPath = require('object-path')
+
 module.exports = {
   deriveClientState: (state, playerID) => {
     const clientState = {
@@ -12,14 +14,18 @@ module.exports = {
       eventInfo: {}
     }
 
-    if (state.event === 'MOVE') {
+    const eventType = objectPath.get(state, 'event.type')
+
+    const eventsWithData = ['MOVE', 'TURN_STAGE_CARD']
+    if (eventsWithData.indexOf(eventType) !== -1) {
       clientState.eventInfo = state.context.eventInfo
     }
 
     clientState.stageCardsGrid = state.context.stageCardsGrid.map(
-      (val) => val >= 0
+      (v, i) => {
+        return v >= 0 ? (state.context.stageCardsGridMask[i] ? v : -1) : -2
+      }
     )
-    console.log(clientState.stageCardsGrid)
     for (const playerIndex in state.context.players) {
       const player = state.context.players[playerIndex]
       const playerInfo = {
