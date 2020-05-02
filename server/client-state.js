@@ -1,5 +1,16 @@
 const objectPath = require('object-path')
 
+const indexFromPlayerID = (context, playerID) => {
+  var index = -1
+  for (const i in context.players) {
+    const player = context.players[i]
+    if (player.id === playerID) {
+      index = parseInt(i)
+    }
+  }
+  return index
+}
+
 module.exports = {
   deriveClientState: (state, playerID) => {
     const clientState = {
@@ -8,6 +19,7 @@ module.exports = {
       activePlayerIndex: -1,
       sponsorIndex: -1,
       auctionMasterIndex: -1,
+      auctionBiddingIndex: -1,
       gamePhase: state.value,
       dieRoll: state.context.dieRoll,
       stageCardsGrid: [],
@@ -30,6 +42,16 @@ module.exports = {
         return v >= 0 ? (state.context.stageCardsGridMask[i] ? v : -1) : -2
       }
     )
+
+    clientState.auctionBids = []
+    for (const i in state.context.auctionBids) {
+      const bid = state.context.auctionBids[i]
+      clientState.auctionBids.push({
+        value: bid.value,
+        playerIndex: indexFromPlayerID(state.context, bid.playerID)
+      })
+    }
+
     for (const playerIndex in state.context.players) {
       const player = state.context.players[playerIndex]
       const playerInfo = {
@@ -54,6 +76,10 @@ module.exports = {
 
       if (player.id === state.context.sponsorHatOwner) {
         clientState.sponsorIndex = parseInt(playerIndex)
+      }
+
+      if (player.id === state.context.auctionBiddingID) {
+        clientState.auctionBiddingIndex = parseInt(playerIndex)
       }
     }
     return clientState

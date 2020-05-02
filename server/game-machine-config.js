@@ -15,15 +15,33 @@ const indexFromPlayerID = (context, playerID) => {
   return index
 }
 
-const getNextPlayerID = (context, playerID) => {
+const getNextPlayerIndexFromIndex = (context, playerIndex) => {
+  return (playerIndex + 1) % (context.players.length)
+}
+
+const getNextPlayerIndex = (context, playerID) => {
   // loop through players
   for (const i in context.players) {
     if (context.players[i].id === playerID) {
       const next = context.players[parseInt(i) + 1]
-      return next ? next.id : context.players[0].id
+      return next ? parseInt(i) + 1 : 0
     }
   }
-  throw (Error('PlayerID not found'))
+  throw (Error('PlayerIndex not found'))
+}
+
+const getNextPlayerID = (context, playerID) => {
+  const nextPlayerIndex = getNextPlayerIndex(context, playerID)
+  return context.players[nextPlayerIndex].id
+}
+
+const getNextBiddingPlayerID = (context, playerID) => {
+  const playerIndex = indexFromPlayerID(context, playerID)
+  var nextPlayerIndex = getNextPlayerIndexFromIndex(context, playerIndex)
+  while (context.players[nextPlayerIndex].passed === true && nextPlayerIndex !== playerIndex) {
+    nextPlayerIndex = getNextPlayerIndexFromIndex(context, nextPlayerIndex)
+  }
+  return context.players[nextPlayerIndex].id
 }
 
 // const playerIDFromIndex = (context, index) => {
@@ -242,6 +260,44 @@ const config = {
         stageCardsForAuction: stageCardsForAuction
       }
     }),
+    auctionBiddingEntry: assign((context, event) => {
+      var players = context.players
+      for (const i in players) {
+        players[i].passed = false
+      }
+      return {
+        auctionBids: Array(context.stageCardsForAuction.length).fill({
+          value: 0,
+          playerID: ''
+        }),
+        players: players,
+        auctionBiddingID: '444'
+      }
+    }),
+    placeBid: assign((context, event) => {
+      var players = context.players
+      var auctionBids = context.auctionBids
+      auctionBids[event.cardLocationIndex] = {
+        value: event.value,
+        playerID: event.playerID
+      }
+      const playerIndex = indexFromPlayerID(context, event.playerID)
+      players[playerIndex].money -= event.value
+      return {
+        players: players,
+        auctionBiddingID: getNextBiddingPlayerID(context, event.playerID),
+        auctionBids: auctionBids
+      }
+    }),
+    passBid: assign((context, event) => {
+      const playerID = event.playerID
+      const playerIndex = indexFromPlayerID(context, playerID)
+      var players = context.players
+      players[playerIndex].passed = true
+      return {
+        players: players
+      }
+    }),
     drawStageCard: assign((context, event) => {
       var players = context.players
       var stageCardsDeck = context.stageCardsDeck
@@ -346,6 +402,14 @@ const config = {
     allAuctionCardsTurned: (context, event) => {
       // three cards selected
       return context.stageCardsGridMask.filter((v) => v === true).length === 3
+    },
+    allPlayersPassed: (context, event) => {
+      for (const i in context.players) {
+        if (!context.players[i].passed) {
+          return false
+        }
+      }
+      return true
     }
   }
 }

@@ -30,11 +30,26 @@ test('derive client state', () => {
       dieRoll: 5,
       stageCardsDeck: [],
       stageCardsDiscarded: [],
-      stageCardsForAuction: [1, 2, 0],
       stageCardsGrid: [-1, -1, 10, -1, 9, 12, 11],
       stageCardsGridMask: [false, false, true, false, false, false, false],
+      stageCardsForAuction: [1, 2, 0],
       sponsorHatOwner: '222',
       auctionMaster: '111',
+      auctionBiddingID: '222',
+      auctionBids: [
+        {
+          value: 0,
+          playerID: ''
+        },
+        {
+          value: 0,
+          playerID: ''
+        },
+        {
+          value: 90,
+          playerID: '222'
+        }
+      ],
       eventInfo: {
         type: 'move',
         playerIndex: 1,
@@ -80,12 +95,27 @@ test('derive client state', () => {
     }
   ])
 
+  expect(clientStateUpdate.auctionBids).toEqual([
+    {
+      value: 0,
+      playerIndex: -1
+    },
+    {
+      value: 0,
+      playerIndex: -1
+    },
+    {
+      value: 90,
+      playerIndex: 1
+    }
+  ])
   expect(clientStateUpdate.stageCardsForAuction).toEqual([1, 2, 0])
   expect(clientStateUpdate.stageCardsGrid).toEqual([-2, -2, 10, -2, -1, -1, -1])
   expect(clientStateUpdate.yourPlayerIndex).toBe(1)
   expect(clientStateUpdate.activePlayerIndex).toBe(0)
   expect(clientStateUpdate.sponsorIndex).toBe(1)
   expect(clientStateUpdate.auctionMasterIndex).toBe(0)
+  expect(clientStateUpdate.auctionBiddingIndex).toBe(1)
   expect(clientStateUpdate.gamePhase).toBe('rolling')
   expect(clientStateUpdate.dieRoll).toBe(5)
 })

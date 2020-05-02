@@ -3,7 +3,7 @@
   "activities": {},
   "meta": {},
   "events": [],
-  "value": "auctionCollectingCards",
+  "value": "auctionBidding",
   "context": {
     "players": [
       {
@@ -35,7 +35,7 @@
           "square": 0
         },
         "stageCards": [],
-        "passed": true
+        "passed": false
       },
       {
         "name": "Frisse Freek",
@@ -52,13 +52,18 @@
     "dieRoll": -1,
     "stageCardsDeck": [10, 11, 12, 13],
     "stageCardsDiscarded": [14, 15, 16],
-    "stageCardsForAuction": [],
-    "stageCardsGrid": [17, 18, 19, 20, 21],
-    "stageCardsGridMask": [true, true, false, true, false],
+    "stageCardsForAuction": [17, 18, 20],
+    "stageCardsGrid": [-1, -1, 19, -1, 21],
+    "stageCardsGridMask": [false, false, false, false, false],
     "test": "",
     "sponsorHatOwner": "",
     "auctionMaster": "444",
-    "auctionBiddingID": ""
+    "auctionBiddingID": "333",
+    "auctionBids": [
+      { "value": 0, "playerID": "" },
+      { "value": 0, "playerID": "" },
+      { "value": 0, "playerID": "" }
+    ]
   },
   "_event": {
     "name": "xstate.init",

@@ -94,5 +94,25 @@ module.exports = {
         playerID: playerID
       })
     }
+  },
+  placeBid: (socket, data, cb) => {
+    const playerID = clients.clients[socket.id].playerID
+    if (playerID) {
+      gameService.send({
+        type: 'PLACE_BID',
+        playerID: playerID,
+        cardLocationIndex: parseInt(data.loc),
+        value: parseInt(data.amount)
+      })
+    }
+  },
+  passBid: (socket, data, cb) => {
+    const playerID = clients.clients[socket.id].playerID
+    if (playerID) {
+      gameService.send({
+        type: 'PASS',
+        playerID: playerID
+      })
+    }
   }
 }

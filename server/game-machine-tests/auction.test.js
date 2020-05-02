@@ -30,12 +30,50 @@ test('collect cards for the auction from grid', async () => {
   service.onTransition(state => {
     if (state.changed === undefined) return
 
-    expect(state.value).toBe('auctionBidding')
     expect(state.context.stageCardsGridMask).toEqual([false, false, false, false, false])
     expect(state.context.stageCardsGrid).toEqual([-1, -1, 19, -1, 21])
     expect(state.context.stageCardsForAuction).toEqual([17, 18, 20])
+
+    // ready for the bidding phase
+    expect(state.value).toBe('auctionBidding')
+    expect(state.context.players[0].passed).toBe(false)
+    expect(state.context.players[1].passed).toBe(false)
+    expect(state.context.players[2].passed).toBe(false)
+    expect(state.context.players[3].passed).toBe(false)
+    expect(state.context.auctionBiddingID).toBe('444')
   })
   service.send('COLLECT_STAGE_CARDS', { playerID: '444' })
+})
+
+test('place first bid', async () => {
+  const service = await testHelpers.getService('auction_start_first_bid')
+  service.onTransition(state => {
+    if (state.changed === undefined) return
+
+    expect(state.context.auctionBids[0].value).toBe(0)
+    expect(state.context.auctionBids[0].playerID).toBe('')
+    expect(state.context.auctionBids[1].value).toBe(100)
+    expect(state.context.auctionBids[1].playerID).toBe('444')
+    expect(state.context.auctionBids[2].value).toBe(0)
+    expect(state.context.auctionBids[2].playerID).toBe('')
+    expect(state.context.auctionBiddingID).toBe('222') // 111 has passed already
+    expect(state.context.players[3].money).toBe(900)
+  })
+  service.send('PLACE_BID', { playerID: '444', cardLocationIndex: 1, value: 100 })
+})
+
+test('last player passes', async () => {
+  const service = await testHelpers.getService('auction_last_bidder_passes')
+  service.onTransition(state => {
+    if (state.changed === undefined) return
+
+    expect(state.context.players[0].passed).toBe(true)
+    expect(state.context.players[1].passed).toBe(true)
+    expect(state.context.players[2].passed).toBe(true)
+    expect(state.context.players[3].passed).toBe(true)
+    expect(state.value).toBe('auctionCollectingCardsAfterBidding')
+  })
+  service.send('PASS', { playerID: '333' })
 })
 
 // test('draw three cards', async () => {

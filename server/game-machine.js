@@ -15,7 +15,7 @@ const gameMachine = Machine({
     test: '',
     sponsorHatOwner: '',
     auctionMaster: '2',
-    auctionBiddingIndex: -1,
+    auctionBiddingID: '',
     stageCards: [],
     stageCardsDeck: [],
     stageCardsDiscarded: [],
@@ -160,6 +160,23 @@ const gameMachine = Machine({
       }
     },
     auctionBidding: {
+      entry: [
+        'auctionBiddingEntry'
+      ],
+      on: {
+        '': {
+          target: 'auctionCollectingCardsAfterBidding',
+          cond: 'allPlayersPassed'
+        },
+        PLACE_BID: {
+          actions: 'placeBid'
+        },
+        PASS: {
+          actions: 'passBid'
+        }
+      }
+    },
+    auctionCollectingCardsAfterBidding: {
 
     },
     launchOrMoney: {
