@@ -111,6 +111,9 @@ const gameMachine = Machine({
       }
     },
     turningFreeStage: {
+      entry: [
+        'replenishGrid'
+      ],
       on: {
         TURN_STAGE_CARD: {
           target: 'collectingFreeStage',
@@ -141,6 +144,9 @@ const gameMachine = Machine({
       }
     },
     auctionTurningCards: {
+      entry: [
+        'replenishGrid'
+      ],
       on: {
         '': {
           target: 'auctionCollectingCards',
@@ -179,7 +185,8 @@ const gameMachine = Machine({
     auctionCollectingCardsAfterBidding: {
       on: {
         COLLECT_AFTER_AUCTION: {
-          target: 'rolling'
+          target: 'rolling',
+          actions: 'collectCardsAfterBidding'
         }
       }
     },

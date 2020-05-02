@@ -3,7 +3,7 @@
   "activities": {},
   "meta": {},
   "events": [],
-  "value": "afterRoll",
+  "value": "auctionCollectingCardsAfterBidding",
   "context": {
     "players": [
       {
@@ -13,16 +13,19 @@
         "positionInfo": {
           "orbit": 0,
           "square": 6
-        }
+        },
+        "stageCards": [],
+        "passed": true
       },
       {
         "name": "Baaaart",
         "id": "222",
         "positionInfo": {
           "orbit": 0,
-          "square": 7
+          "square": 10
         },
-        "stageCards": []
+        "stageCards": [],
+        "passed": true
       },
       {
         "name": "Freek",
@@ -30,7 +33,9 @@
         "positionInfo": {
           "orbit": 0,
           "square": 0
-        }
+        },
+        "stageCards": [],
+        "passed": true
       },
       {
         "name": "Frisse Freek",
@@ -38,21 +43,27 @@
         "positionInfo": {
           "orbit": 0,
           "square": 0
-        }
+        },
+        "stageCards": [],
+        "passed": true
       }
     ],
-    "activePlayerID": "222",
-    "dieRoll": 3,
-    "stageCardsDeck": [],
-    "stageCardsDiscarded": [10, 11, 12, 13],
-    "stageCardsForAuction": [],
-    "stageCardsGrid": [14, 15, 16, 17, 18, -1, -1, -1],
-    "stageCardsGridMask": [false, false, false, false, false, false, false, false],
+    "activePlayerID": "111",
+    "dieRoll": -1,
+    "stageCardsDeck": [10, 11, 12, 13],
+    "stageCardsDiscarded": [14, 15, 16],
+    "stageCardsForAuction": [17, 18, 20],
+    "stageCardsGrid": [-1, -1, 19, -1, 21],
+    "stageCardsGridMask": [false, false, false, false, false],
     "test": "",
     "sponsorHatOwner": "",
-    "auctionMaster": "2",
-    "auctionBiddingIndex": -1,
-    "stageCards": []
+    "auctionMaster": "444",
+    "auctionBiddingID": "333",
+    "auctionBids": [
+      { "value": 10, "playerID": "444" },
+      { "value": 0, "playerID": "" },
+      { "value": 0, "playerID": "" }
+    ]
   },
   "_event": {
     "name": "xstate.init",

@@ -204,40 +204,66 @@ const config = {
         }
       }
     }),
-    collectStageCard: assign((context, event) => {
-      const playerIndex = indexFromPlayerID(context, event.playerID)
-      var players = context.players
+    replenishGrid: assign((context, event) => {
+      var stageCardsGrid = context.stageCardsGrid
       var stageCardsDeck = context.stageCardsDeck
       var stageCardsDiscarded = context.stageCardsDiscarded
-      var stageCardsGrid = context.stageCardsGrid
-      var stageCardsGridMask = context.stageCardsGridMask
 
-      for (const i in stageCardsGridMask) {
-        if (stageCardsGridMask[i]) {
-          stageCardsGridMask[i] = false
-          players[playerIndex].stageCards.push(stageCardsGrid[i])
-          stageCardsGrid[i] = -1
-          // add a card from the deck to the grid
+      for (const i in stageCardsGrid) {
+        if (stageCardsGrid[i] === -1) {
           const newCard = stageCardsDeck.pop()
           if (newCard) {
             stageCardsGrid[i] = newCard
           } else {
-            // shuffle deck
+            // reshuffle
             stageCardsDeck = _.shuffle(stageCardsDiscarded)
             stageCardsDiscarded = []
-            // try again
             const newCard = stageCardsDeck.pop()
             if (newCard) {
               stageCardsGrid[i] = newCard
             }
           }
+        }
+      }
+      return {
+        stageCardsDeck: stageCardsDeck,
+        stageCardsGrid: stageCardsGrid,
+        stageCardsDiscarded: stageCardsDiscarded
+      }
+    }),
+    collectCardsAfterBidding: assign((context, event) => {
+      var players = context.players
+      var stageCardsDiscarded = context.stageCardsDiscarded
+      for (const i in context.stageCardsForAuction) {
+        const card = context.stageCardsForAuction[i]
+        // check the bid
+        if (context.auctionBids[i].playerID !== '') {
+          const playerIndex = indexFromPlayerID(context, context.auctionBids[i].playerID)
+          players[playerIndex].stageCards.push(card)
+        } else {
+          stageCardsDiscarded.push(card)
+        }
+      }
+      return {
+        players: players,
+        stageCardsDiscarded: stageCardsDiscarded
+      }
+    }),
+    collectStageCard: assign((context, event) => {
+      const playerIndex = indexFromPlayerID(context, event.playerID)
+      var players = context.players
+      var stageCardsGrid = context.stageCardsGrid
+      var stageCardsGridMask = context.stageCardsGridMask
+      for (const i in stageCardsGridMask) {
+        if (stageCardsGridMask[i]) {
+          stageCardsGridMask[i] = false
+          players[playerIndex].stageCards.push(stageCardsGrid[i])
+          stageCardsGrid[i] = -1
           break
         }
       }
       return {
         players: players,
-        stageCardsDiscarded: stageCardsDiscarded,
-        stageCardsDeck: stageCardsDeck,
         stageCardsGrid: stageCardsGrid,
         stageCardsGridMask: stageCardsGridMask
       }

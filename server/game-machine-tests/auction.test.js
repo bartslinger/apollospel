@@ -8,6 +8,7 @@ test('turn a stage card', async () => {
     if (state.changed === undefined) return
 
     expect(state.value).toBe('auctionTurningCards')
+    expect(state.context.stageCardsGrid).toEqual([17, 18, 19, 20, 21])
     expect(state.context.stageCardsGridMask).toEqual([false, true, false, false, false])
   })
   service.send('TURN_STAGE_CARD', { playerID: '444', cardGridIndex: 1 })
@@ -77,5 +78,13 @@ test('last player passes', async () => {
 })
 
 test('distribute cards after everyone passes', async () => {
+  const service = await testHelpers.getService('auction_collecting_cards')
+  service.onTransition(state => {
+    if (state.changed === undefined) return
 
+    expect(state.value).toBe('rolling')
+    expect(state.context.players[3].stageCards).toEqual([17])
+    expect(state.context.stageCardsDiscarded).toEqual([14, 15, 16, 18, 20])
+  })
+  service.send('COLLECT_AFTER_AUCTION', { playerID: '444' })
 })
