@@ -427,7 +427,8 @@ const config = {
     },
     allAuctionCardsTurned: (context, event) => {
       // three cards selected
-      return context.stageCardsGridMask.filter((v) => v === true).length === 3
+      const cardsAvailableInGrid = context.stageCardsGrid.filter((v) => v >= 0).length
+      return context.stageCardsGridMask.filter((v) => v === true).length === Math.min(cardsAvailableInGrid, 3)
     },
     allPlayersPassed: (context, event) => {
       for (const i in context.players) {
@@ -436,6 +437,9 @@ const config = {
         }
       }
       return true
+    },
+    gridDepleted: (context, value) => {
+      return context.stageCardsGrid.filter((v) => v >= 0).length === 0
     }
   }
 }

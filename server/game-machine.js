@@ -148,10 +148,16 @@ const gameMachine = Machine({
         'replenishGrid'
       ],
       on: {
-        '': {
-          target: 'auctionCollectingCards',
-          cond: 'allAuctionCardsTurned'
-        },
+        '': [
+          {
+            target: 'launchOrMoney',
+            cond: 'gridDepleted'
+          },
+          {
+            target: 'auctionCollectingCards',
+            cond: 'allAuctionCardsTurned'
+          }
+        ],
         TURN_STAGE_CARD: {
           actions: 'turnStageCard'
         }
@@ -185,7 +191,7 @@ const gameMachine = Machine({
     auctionCollectingCardsAfterBidding: {
       on: {
         COLLECT_AFTER_AUCTION: {
-          target: 'rolling',
+          target: 'launchOrMoney',
           actions: 'collectCardsAfterBidding'
         }
       }

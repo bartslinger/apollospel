@@ -3,7 +3,7 @@
   "activities": {},
   "meta": {},
   "events": [],
-  "value": "rolling",
+  "value": "auctionTurningCards",
   "context": {
     "players": [
       {
@@ -23,18 +23,17 @@
         "id": "444"
       }
     ],
-    "activePlayerID": "444",
+    "activePlayerID": "111",
     "dieRoll": -1,
-    "stageCardsDeck": [10, 11, 12, 13],
+    "stageCardsDeck": [],
     "stageCardsDiscarded": [],
     "stageCardsForAuction": [],
-    "stageCardsGrid": [-1, -1, -1, -1],
+    "stageCardsGrid": [17, -1, -1, -1],
     "stageCardsGridMask": [false, false, false, false],
     "test": "",
     "sponsorHatOwner": "",
-    "auctionMaster": "2",
-    "auctionBiddingIndex": -1,
-    "stageCards": []
+    "auctionMaster": "444",
+    "auctionBiddingIndex": -1
   },
   "_event": {
     "name": "xstate.init",

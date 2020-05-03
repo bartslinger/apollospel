@@ -26,6 +26,18 @@ test('turn third stage card and proceed to collect', async () => {
   service.send('TURN_STAGE_CARD', { playerID: '444', cardGridIndex: 3 })
 })
 
+test('turn only one card when that is all there is', async () => {
+  const service = await testHelpers.getService('auction_master_drawing_only_one_card')
+  service.onTransition(state => {
+    if (state.changed === undefined) return
+
+    expect(state.value).toBe('auctionCollectingCards')
+    expect(state.context.stageCardsGridMask).toEqual([true, false, false, false])
+  })
+
+  service.send('TURN_STAGE_CARD', { playerID: '444', cardGridIndex: 0 })
+})
+
 test('collect cards for the auction from grid', async () => {
   const service = await testHelpers.getService('auction_master_collecting_cards_from_grid')
   service.onTransition(state => {
@@ -82,7 +94,7 @@ test('distribute cards after everyone passes', async () => {
   service.onTransition(state => {
     if (state.changed === undefined) return
 
-    expect(state.value).toBe('rolling')
+    expect(state.value).toBe('launchOrMoney')
     expect(state.context.players[3].stageCards).toEqual([17])
     expect(state.context.stageCardsDiscarded).toEqual([14, 15, 16, 18, 20])
   })
